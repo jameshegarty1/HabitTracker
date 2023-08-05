@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./django_backend
+    command: bash -c "./start_app.sh"
+    container_name: HabitTracker_backend
+    ports:
+      - "8080:8080"
