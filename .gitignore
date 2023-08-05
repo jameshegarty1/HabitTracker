@@ -1,0 +1,5 @@
+venv/
+django_backend/api/__pycache__/
+django_backend/api/migrations/
+django_backend/db.sqlite3
+django_backend/HabitTracker/__pycache__/
