@@ -7,5 +7,5 @@ urlpatterns = [
     path('habits/create/', views.createHabit),
     path('habits/<str:pk>/update/', views.updateHabit),
     path('habits/<str:pk>/delete/', views.deleteHabit),
-    path('habits/<str:pk>', views.getHabit)
+    path('habits/<str:pk>/', views.getHabit)
 ]
