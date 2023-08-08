@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/update.dart';
+import 'package:flutter_frontend/create.dart';
 import 'package:flutter_frontend/urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -81,7 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(habits[index].habit),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => UpdatePage(
+                            client: client,
+                            id: habits[index].id,
+                            habit: habits[index].habit,
+                          )),
+                );
+              },
               trailing: IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () => _deleteHabit(habits[index].id),
@@ -91,7 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => CreatePage(
+                    client: client,
+                  )),
+        ),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
