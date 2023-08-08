@@ -8,31 +8,31 @@ from .models import Habit
 def getRoutes(request):
     routes = [
         {
-            'Endpoint' : '/HabitTracker/',
+            'Endpoint' : '/habits/',
             'method' : 'GET',
             'body' : None,
             'description' : 'Returns an array of Habits'
         },
         {
-            'Endpoint' : '/HabitTracker/id/',
+            'Endpoint' : '/habits/id/',
             'method' : 'GET',
             'body' : None,
             'description' : 'Returns a single Habits'
         },
         {
-            'Endpoint' : '/HabitTracker/id/create/',
+            'Endpoint' : '/habits/create/',
             'method' : 'POST',
             'body' : {'body': ""},
             'description' : 'Creates a new Habit with data sent in POST request'
         },
         {
-            'Endpoint' : '/HabitTracker/id/update/',
+            'Endpoint' : '/habits/id/update/',
             'method' : 'PUT',
             'body' : {'body': ""},
             'description' : 'Modifies an existing Habit with data sent in PUT request'
         },
         {
-            'Endpoint' : '/HabitTracker/id/delete/',
+            'Endpoint' : '/habits/id/delete/',
             'method' : 'DELETE',
             'body' : None,
             'description' : 'Deletes an existing Habit'
