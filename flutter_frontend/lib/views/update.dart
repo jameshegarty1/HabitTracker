@@ -2,27 +2,29 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/urls.dart';
+import 'package:flutter_frontend/utils/urls.dart';
 
-class CreatePage extends StatefulWidget {
+class UpdatePage extends StatefulWidget {
   final Client client;
-  const CreatePage({
-    Key? key,
-    required this.client,
-  }) : super(key: key);
+  final int id;
+  final String name;
+
+  const UpdatePage(
+      {Key? key, required this.client, required this.id, required this.name})
+      : super(key: key);
 
   @override
-  _CreatePageState createState() => _CreatePageState();
+  _UpdatePageState createState() => _UpdatePageState();
 }
 
-class _CreatePageState extends State<CreatePage> {
+class _UpdatePageState extends State<UpdatePage> {
   TextEditingController controller = TextEditingController();
 
-  Future<void> createHabit(String bodyText) async {
+  Future<void> updateHabit(int id, String bodyText) async {
     final String endpoint =
-        '$baseUrl/habits/create/'; // replace ID with the actual ID if needed
+        '$baseUrl/habits/$id/update/'; // replace ID with the actual ID if needed
 
-    final response = await widget.client.post(
+    final response = await widget.client.put(
       Uri.parse(endpoint),
       headers: {
         'Content-Type': 'application/json',
@@ -33,18 +35,23 @@ class _CreatePageState extends State<CreatePage> {
     );
 
     if (response.statusCode == 200) {
-      print('Habit created successfully');
+      print('Habit Updated successfully');
     } else {
-      print('Failed to create habit. Status code: ${response.statusCode}');
+      print('Failed to Update habit. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
+  }
+
+  initState() {
+    controller.text = widget.name;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Create"),
+          title: Text("Update"),
         ),
         body: Column(
           children: [
@@ -54,10 +61,10 @@ class _CreatePageState extends State<CreatePage> {
             ),
             ElevatedButton(
               onPressed: () {
-                createHabit(controller.text);
+                updateHabit(widget.id, controller.text);
                 Navigator.pop(context);
               },
-              child: Text("Create habit"),
+              child: Text("Update habit"),
             )
           ],
         ));
