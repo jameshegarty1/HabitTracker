@@ -1,27 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/utils/utils.dart';
 
 enum HabitType { infinite, finite }
 
-String? timeOfDayToString(TimeOfDay? tod) {
-  if (tod == null) return null;
-  final String hour = tod.hour.toString().padLeft(2, '0');
-  final String minute = tod.minute.toString().padLeft(2, '0');
-  return '$hour:$minute';
-}
-
-TimeOfDay? stringToTimeOfDay(String? tod) {
-  if (tod == null) return null;
-  final List<String> parts = tod.split(':');
-  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-}
-
 HabitType stringToHabitType(String habitTypeString) {
   switch (habitTypeString) {
-    case 'INFINITE':
+    case 'infinite':
       return HabitType.infinite;
-    case 'FINITE':
+    case 'finite':
       return HabitType.finite;
     default:
       throw ArgumentError('Unknown habit type string: $habitTypeString');
@@ -94,9 +82,8 @@ class Habit {
   }
 
   Map<String, dynamic> toMap() {
-    // TODO: Convert enum to string and TimeOfDay to appropriate format
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'parent_habit': parentHabitId,
       'name': name,
       'description': description,
@@ -108,9 +95,38 @@ class Habit {
       // Convert TimeOfDay to your desired format here
       'notification_time': timeOfDayToString(notificationTime),
       'tags': tags,
-      'updated': updated.toIso8601String(),
-      'created': created.toIso8601String(),
+      'updated': updated?.toIso8601String(),
+      'created': created?.toIso8601String(),
     };
+  }
+
+  factory Habit.newHabit({
+    required String name,
+    int? parentHabitId,
+    String? description,
+    HabitType habitType = HabitType.infinite,
+    int? goalQuantity,
+    int? currentQuantity,
+    DateTime? startDate,
+    DateTime? endDate,
+    TimeOfDay? notificationTime,
+    List<String>? tags,
+  }) {
+    return Habit(
+      id: null,
+      name: name,
+      parentHabitId: parentHabitId,
+      description: description,
+      habitType: habitType,
+      goalQuantity: goalQuantity,
+      currentQuantity: currentQuantity ?? 0,
+      startDate: startDate,
+      endDate: endDate,
+      notificationTime: notificationTime,
+      tags: tags,
+      updated: null,
+      created: null,
+    );
   }
 
   factory Habit.fromMap(Map<String, dynamic> map) {

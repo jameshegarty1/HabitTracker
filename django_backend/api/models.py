@@ -3,8 +3,8 @@ from django.db import models
 
 class Habit(models.Model):
     # Habit types
-    INFINITE = 'INFINITE'
-    FINITE = 'FINITE'
+    INFINITE = 'infinite'
+    FINITE = 'finite'
     HABIT_TYPE_CHOICES = [
         (INFINITE, 'Infinite'),
         (FINITE, 'Finite')

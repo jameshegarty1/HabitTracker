@@ -39,7 +39,8 @@ class HabitService {
 
   Future<void> updateHabit(Habit habit) async {
     final response = await client.put(
-      updateUrl(habit.id), // Assuming updateUrl takes habit's id as a parameter
+      updateUrl(
+          habit.id!), // Assuming updateUrl takes habit's id as a parameter
       headers: {
         'Content-Type': 'application/json',
       },

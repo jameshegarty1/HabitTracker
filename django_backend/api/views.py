@@ -125,14 +125,22 @@ def getHabit(request, pk):
 def createHabit(request):
     data = request.data
 
-    tags_data = data.get('tags', [])
-    tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
+    tags = []
+    if 'tags' in data and data['tags'] is not None:
+        tags_data = data['tags']
+        try:
+            tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
+        except Exception as e:
+            return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     habit_serializer = HabitSerializer(data=data)
     
     if habit_serializer.is_valid():
         habit = habit_serializer.save()
-        habit.tags.set(tags)
+        if not habit:
+            return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if tags:
+            habit.tags.set(tags)
         return Response(habit_serializer.data)
     else:
         return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

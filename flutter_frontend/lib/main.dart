@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/views/habit_list_view.dart';
+import 'package:flutter_frontend/views/list_habits.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/models/habit.dart';
-import 'package:flutter_frontend/utils/urls.dart';
+import 'package:flutter_frontend/utils/utils.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:flutter_frontend/views/create.dart';
-import 'package:flutter_frontend/views/update.dart';
+import 'package:flutter_frontend/views/create_habit.dart';
+import 'package:flutter_frontend/views/update_habit.dart';
 import 'package:flutter_frontend/services/habit_service.dart';
 
 class HabitListView extends StatefulWidget {
@@ -31,8 +30,35 @@ class _HabitListViewState extends State<HabitListView> {
     }
   }
 
-  String formatDate(DateTime dateTime) {
-    return DateFormat.yMMMMd('en_UK').format(dateTime);
+  Future<void> _confirmDeletion(Habit habit) async {
+    bool? result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text('Do you really want to delete this habit?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+    if (result ?? false) {
+      // Proceed with deletion
+      await habitService.deleteHabit(habit.id!);
+      _refreshHabits();
+    }
   }
 
   @override
@@ -46,7 +72,7 @@ class _HabitListViewState extends State<HabitListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Title"),
+        title: Text("My Habits"),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshHabits,
@@ -90,27 +116,23 @@ class _HabitListViewState extends State<HabitListView> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => UpdatePage(
-                                      client: widget.client,
-                                      id: currentHabit.id,
-                                      name: currentHabit.name,
-                                    )),
-                          );
+                        onPressed: () async {
+                          bool? result = await Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) => UpdatePage(
+                                        habitService: habitService,
+                                        habit: currentHabit,
+                                      )));
+                          if (result != null && result) {
+                            _refreshHabits();
+                          }
+                          ;
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () async {
-                          try {
-                            await habitService.deleteHabit(currentHabit.id);
-                            // Optionally: Refresh the habits list after deletion
-                            _refreshHabits();
-                          } catch (e) {
-                            // Optionally: Show an error message to the user
-                          }
+                          await _confirmDeletion(currentHabit);
                         },
                       ),
                     ],
