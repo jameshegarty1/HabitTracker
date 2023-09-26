@@ -5,6 +5,8 @@ import 'package:flutter_frontend/utils/utils.dart';
 
 enum HabitType { infinite, finite }
 
+enum Priority { none, critical, high, medium, low }
+
 HabitType stringToHabitType(String habitTypeString) {
   switch (habitTypeString) {
     case 'infinite':
@@ -14,6 +16,27 @@ HabitType stringToHabitType(String habitTypeString) {
     default:
       throw ArgumentError('Unknown habit type string: $habitTypeString');
   }
+}
+
+Priority stringToPriority(String priorityString) {
+  switch (priorityString) {
+    case 'none':
+      return Priority.none;
+    case 'critical':
+      return Priority.critical;
+    case 'high':
+      return Priority.high;
+    case 'medium':
+      return Priority.medium;
+    case 'low':
+      return Priority.low;
+    default:
+      throw ArgumentError('Unknown priority string: $priorityString');
+  }
+}
+
+String priorityToString(Priority priority) {
+  return priority.toString().split('.').last;
 }
 
 class Habit {
@@ -28,6 +51,7 @@ class Habit {
   DateTime? endDate;
   TimeOfDay?
       notificationTime; // You'll need to import 'package:flutter/material.dart'
+  Priority priority;
   List<String>?
       tags; // Assuming Tag model is just a list of tag names. If not, adjust accordingly.
   DateTime? updated;
@@ -44,6 +68,7 @@ class Habit {
     this.startDate,
     this.endDate,
     this.notificationTime,
+    this.priority = Priority.none,
     this.tags,
     this.updated,
     this.created,
@@ -60,6 +85,7 @@ class Habit {
     DateTime? startDate,
     DateTime? endDate,
     TimeOfDay? notificationTime,
+    Priority? priority,
     List<String>? tags,
     DateTime? updated,
     DateTime? created,
@@ -75,6 +101,7 @@ class Habit {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       notificationTime: notificationTime ?? this.notificationTime,
+      priority: priority ?? this.priority,
       tags: tags ?? this.tags,
       updated: updated ?? this.updated,
       created: created ?? this.created,
@@ -93,6 +120,7 @@ class Habit {
       'start_date': formatDateForAPI(startDate),
       'end_date': formatDateForAPI(endDate),
       'notification_time': timeOfDayToString(notificationTime),
+      'priority': priorityToString(priority),
       'tags': tags,
       'updated': updated?.toIso8601String(),
       'created': created?.toIso8601String(),
@@ -109,6 +137,7 @@ class Habit {
     DateTime? startDate,
     DateTime? endDate,
     TimeOfDay? notificationTime,
+    Priority priority = Priority.none,
     List<String>? tags,
   }) {
     return Habit(
@@ -122,6 +151,7 @@ class Habit {
       startDate: startDate,
       endDate: endDate,
       notificationTime: notificationTime,
+      priority: priority,
       tags: tags,
       updated: null,
       created: null,
@@ -142,6 +172,7 @@ class Habit {
       endDate: map['end_date'] == null ? null : DateTime.parse(map['end_date']),
       notificationTime: stringToTimeOfDay(map['notification_time']
           as String?), // assuming you have the stringToTimeOfDay function in the same file or it's imported
+      priority: stringToPriority(map['priority']),
       tags: List<String>.from(map['tags'] as List),
       updated: DateTime.parse(map['updated'] as String),
       created: DateTime.parse(map['created'] as String),

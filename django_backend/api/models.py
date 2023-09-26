@@ -9,6 +9,20 @@ class Habit(models.Model):
         (INFINITE, 'Infinite'),
         (FINITE, 'Finite')
     ]
+
+    PRIORITY_CRITICAL = 'critical'
+    PRIORITY_HIGH = 'high'
+    PRIORITY_MEDIUM = 'medium'
+    PRIORITY_LOW = 'low'
+    PRIORITY_NONE = 'none'
+    PRIORITY_CHOICES = [
+        (PRIORITY_CRITICAL, 'Critical'),
+        (PRIORITY_HIGH, 'High'),
+        (PRIORITY_MEDIUM, 'Medium'),
+        (PRIORITY_LOW, 'Low'),
+        (PRIORITY_NONE, 'None'),
+    ]
+
     
     # Habit data
     #user = models.ForeignKey('auth.User', on_delete=models.CASCADE)  # Link the habit to a user.
@@ -21,6 +35,12 @@ class Habit(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     notification_time = models.TimeField(null=True, blank=True)
+    priority = models.CharField(
+        max_length=8,
+        choices=PRIORITY_CHOICES,
+        default=PRIORITY_NONE,
+        help_text="Priority of the habit"
+    )
     tags = models.ManyToManyField('Tag', blank=True)  # A many-to-many relationship with a Tag model (to be defined).
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

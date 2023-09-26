@@ -88,6 +88,10 @@ class _HabitListViewState extends State<HabitListView> {
                   subtitle: Text(currentHabit.description ?? "No description"),
                 ),
                 ListTile(
+                  title: Text("Priority"),
+                  subtitle: Text(priorityToString(currentHabit.priority)),
+                ),
+                ListTile(
                   title: Text("Habit Type"),
                   subtitle:
                       Text(currentHabit.habitType.toString().split('.').last),

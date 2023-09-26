@@ -30,6 +30,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
           : "${_selectedEndDate!.toLocal()}".split(' ')[0];
       goalQuantityController.text =
           widget.initialHabit!.goalQuantity?.toString() ?? '';
+      _selectedPriority = widget.initialHabit?.priority ?? Priority.none;
     }
   }
 
@@ -48,6 +49,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
   final TextEditingController endDateController = TextEditingController();
   final TextEditingController goalQuantityController = TextEditingController();
   DateTime? _selectedEndDate;
+  Priority? _selectedPriority;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -75,6 +77,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
         habitType: _selectedHabitType ?? HabitType.infinite,
         endDate: _selectedEndDate,
         goalQuantity: int.tryParse(goalQuantityController.text),
+        priority: _selectedPriority,
       );
     } else {
       // We are in create mode
@@ -84,6 +87,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
         habitType: _selectedHabitType ?? HabitType.infinite,
         endDate: _selectedEndDate,
         goalQuantity: int.tryParse(goalQuantityController.text),
+        priority: _selectedPriority ?? Priority.none,
       );
     }
 
@@ -109,6 +113,23 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
                 labelText: "Description",
               ),
             ),
+            DropdownButton<Priority>(
+              value: _selectedPriority,
+              hint: Text('Choose Priority'),
+              onChanged: (Priority? newValue) {
+                setState(() {
+                  _selectedPriority = newValue;
+                });
+              },
+              items: Priority.values
+                  .map<DropdownMenuItem<Priority>>((Priority value) {
+                return DropdownMenuItem<Priority>(
+                  value: value,
+                  child: Text(priorityToString(value)),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 16.0),
             DropdownButton<HabitType>(
               value: _selectedHabitType,
               hint: Text('Choose Habit Type'),
