@@ -18,8 +18,6 @@ class UpdatePage extends StatefulWidget {
 }
 
 class _UpdatePageState extends State<UpdatePage> {
-  late HabitService habitService;
-
   @override
   void initState() {
     super.initState();
@@ -40,13 +38,14 @@ class _UpdatePageState extends State<UpdatePage> {
               Habit habitToUpdate = updatedHabit.copyWith(id: widget.habit.id);
               // Handle the form submission
               try {
-                await habitService.updateHabit(habitToUpdate);
+                await widget.habitService.updateHabit(habitToUpdate);
                 Navigator.of(context).pop(true); // Go back after updating
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Habit updated successfully!')),
                 );
               } catch (e) {
                 // Handle any errors, e.g., show a Snackbar
+                print(e);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Error updating habit')),
                 );

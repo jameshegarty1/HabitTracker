@@ -90,9 +90,8 @@ class Habit {
       'habit_type': habitType.toString().split('.').last,
       'goal_quantity': goalQuantity,
       'current_quantity': currentQuantity,
-      'start_date': startDate?.toIso8601String(),
-      'end_date': endDate?.toIso8601String(),
-      // Convert TimeOfDay to your desired format here
+      'start_date': formatDateForAPI(startDate),
+      'end_date': formatDateForAPI(endDate),
       'notification_time': timeOfDayToString(notificationTime),
       'tags': tags,
       'updated': updated?.toIso8601String(),

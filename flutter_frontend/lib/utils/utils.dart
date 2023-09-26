@@ -17,3 +17,10 @@ TimeOfDay? stringToTimeOfDay(String? tod) {
 String formatDate(DateTime dateTime) {
   return DateFormat.yMMMMd('en_UK').format(dateTime);
 }
+
+String? formatDateForAPI(DateTime? date) {
+  if (date == null) {
+    return null;
+  }
+  return DateFormat('yyyy-MM-dd').format(date);
+}
