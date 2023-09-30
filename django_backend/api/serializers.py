@@ -1,7 +1,19 @@
-from rest_framework.serializers import ModelSerializer
-from .models import Habit
+from rest_framework import serializers
+from .models import Habit, HabitRecord, Tag
 
-class HabitSerializer(ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
+
+class HabitRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HabitRecord
+        fields = '__all__'
+
+class HabitSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True, read_only=True)
+
     class Meta:
         model = Habit
         fields = '__all__'
