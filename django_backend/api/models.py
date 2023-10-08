@@ -56,8 +56,16 @@ class HabitRecord(models.Model):
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
     #user = models.ForeignKey('auth.User', on_delete=models.CASCADE)  # Link the history to a user.
     completion_date = models.DateField(auto_now_add=True)
-    progress = models.PositiveIntegerField(default=0)  # For habits where you track progress.
     notes = models.TextField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Update current_quantity for both finite and infinite habits
+        self.habit.current_quantity += 1
+        #To-do : handle cases of exceeding the goal
+        #if self.habit.habit_type == Habit.FINITE and self.habit.current_quantity > self.habit.goal_quantity:
+            #self.habit.current_quantity = self.habit.goal_quantity
+        self.habit.save()
+        super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['-completion_date']
