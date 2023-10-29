@@ -55,7 +55,7 @@ class Habit(models.Model):
 class HabitRecord(models.Model):
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
     #user = models.ForeignKey('auth.User', on_delete=models.CASCADE)  # Link the history to a user.
-    completion_date = models.DateField(auto_now_add=True)
+    execution_date = models.DateField(auto_now_add=True)
     notes = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -68,7 +68,7 @@ class HabitRecord(models.Model):
         super().save(*args, **kwargs)
     
     class Meta:
-        ordering = ['-completion_date']
+        ordering = ['-execution_date']
 
 
 class Tag(models.Model):  # Basic tag model to categorize habits.

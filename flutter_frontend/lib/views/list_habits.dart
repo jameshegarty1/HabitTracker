@@ -4,6 +4,7 @@ import 'package:flutter_frontend/services/habit_service.dart';
 import 'package:flutter_frontend/views/create_habit.dart';
 import 'package:http/http.dart' as http;
 
+import '../utils/dialog_utils.dart';
 import 'detail_habit.dart';
 
 class HabitListView extends StatefulWidget {
@@ -47,9 +48,14 @@ class _HabitListViewState extends State<HabitListView> {
             return ExpansionTile(
               title: Text(habit.name),
               trailing: IconButton(
-                icon: Icon(Icons.check),
-                onPressed: () {/* handle habit completion */},
-              ),
+                  icon: Icon(Icons.check),
+                  onPressed: () async {
+                    bool? executed =
+                        await confirmExecution(context, habit, habitService);
+                    if (executed) {
+                      _refreshHabits();
+                    }
+                  }),
               children: [
                 ListTile(
                   title: Text('Details, tap to view more'),

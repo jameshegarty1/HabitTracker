@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/utils/utils.dart';
 
+import 'habit_execution.dart';
+
 enum HabitType { infinite, finite }
 
 enum Priority { none, critical, high, medium, low }
@@ -73,6 +75,19 @@ class Habit {
     this.updated,
     this.created,
   });
+
+  HabitExecution executeHabit() {
+    if (id == null) {
+      throw Exception('Cannot execute a habit without an ID');
+    }
+
+    // Create an execution instance
+    HabitExecution execution = HabitExecution(
+      habitId: id!,
+    );
+
+    return execution;
+  }
 
   Habit copyWith({
     int? id,

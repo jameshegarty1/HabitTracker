@@ -35,3 +35,32 @@ Future<bool> confirmDeletion(
   }
   return false;
 }
+
+Future<bool> confirmExecution(
+    BuildContext context, Habit habit, HabitService habitService) async {
+  try {
+    var execution = habit.executeHabit();
+    var updatedHabit = await habitService.executeHabit(execution, habit);
+    return true;
+  } catch (e) {
+    print('Error executing the habit: $e');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('An error occurred while executing the habit.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return false;
+  }
+}
