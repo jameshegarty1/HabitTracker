@@ -69,19 +69,10 @@ class HabitService {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(execution),
+      body: jsonEncode(execution.toMap()),
     );
 
-    final update_response = await client.put(
-      updateUrl(
-          habit.id!), // Assuming updateUrl takes habit's id as a parameter
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(habit.toMap()),
-    );
-    if ((exec_response.statusCode == 200) &&
-        (update_response.statusCode == 200)) {
+    if (exec_response.statusCode == 201) {
       print('Habit executed successfully');
     } else {
       print(

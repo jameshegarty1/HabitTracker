@@ -14,7 +14,7 @@ class CreatePage extends StatelessWidget {
       body: HabitFormWidget(
         onFormSubmit: (habit) {
           habitService.createHabit(habit);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
       ),
     );

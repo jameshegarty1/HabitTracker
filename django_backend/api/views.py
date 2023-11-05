@@ -191,7 +191,7 @@ def createHabitRecord(request):
             habit = Habit.objects.get(id=habit_id)
         except Habit.DoesNotExist:
             return Response({"detail": "Habit not found"}, status=404)
-        instance = serializer.save(habit=habit)
+        instance = HabitRecord.objects.create(habit=habit, notes=serializer.validated_data.get('notes', ''))
         return Response(HabitRecordSerializer(instance).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

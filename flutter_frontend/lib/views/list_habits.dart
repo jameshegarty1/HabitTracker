@@ -79,12 +79,18 @@ class _HabitListViewState extends State<HabitListView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CreatePage(habitService: habitService),
-          ),
-        ),
+        onPressed: () async {
+          bool? refresh = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreatePage(habitService: habitService),
+            ),
+          );
+
+          if (refresh ?? false) {
+            _refreshHabits();
+          }
+        },
         tooltip: 'Add Habit',
         child: Icon(Icons.add),
       ),

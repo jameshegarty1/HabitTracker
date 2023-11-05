@@ -9,7 +9,7 @@ class RequestLoggingMiddleware:
     def __call__(self, request):
         # This code is executed for each request before
         # the view (and other middleware) are called.
-
+        logger.debug("\n\n****** PRINTING HTTP REQUEST ******\n\n")
         logger.debug("Method: %s", request.method)
         logger.debug("Path: %s", request.path)
         try:
