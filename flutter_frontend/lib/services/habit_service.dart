@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_frontend/models/habit_execution.dart';
 import 'package:http/http.dart';
 import 'package:flutter_frontend/utils/urls.dart';
 import 'package:flutter_frontend/models/habit.dart';
@@ -59,6 +60,24 @@ class HabitService {
     if (response.statusCode != 200) {
       print('Failed to delete habit. Status code: ${response.statusCode}');
       throw Exception('Failed to delete habit');
+    }
+  }
+
+  Future<void> executeHabit(HabitExecution execution, Habit habit) async {
+    final exec_response = await client.post(
+      executeHabitUrl(), // Assuming updateUrl takes habit's id as a parameter
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(execution.toMap()),
+    );
+
+    if (exec_response.statusCode == 201) {
+      print('Habit executed successfully');
+    } else {
+      print(
+          'Failed to execute habit. Status codes: ${exec_response.statusCode}');
+      print('Response body: ${exec_response.body}');
     }
   }
 }

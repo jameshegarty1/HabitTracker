@@ -7,9 +7,14 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class HabitRecordSerializer(serializers.ModelSerializer):
+    habitId = serializers.IntegerField(write_only=True)
     class Meta:
         model = HabitRecord
-        fields = '__all__'
+        fields = ['habitId', 'notes']
+    
+    
+
+
 
 class HabitSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)

@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  backend:
+  web:
     build:
       context: ./django_backend
-    command: bash -c "./start_app.sh"
-    container_name: HabitTracker_backend
+    command: python3 manage.py runserver 0.0.0.0:8080
+    container_name: web_server
     ports:
       - "8080:8080"
     depends_on:
