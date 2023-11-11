@@ -3,3 +3,9 @@ django_backend/api/__pycache__/
 django_backend/api/migrations/
 django_backend/db.sqlite3
 django_backend/HabitTracker/__pycache__/
+django_backend/htmlcov
+django_backend/tests/__pycache__/
+django_backend/tests/api/__pycache__/
+django_backend/.coverage
+django_backend/debug.log
+.coverage
