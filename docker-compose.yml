@@ -6,6 +6,8 @@ services:
       context: ./django_backend
     command: python3 manage.py runserver 0.0.0.0:8080
     container_name: web_server
+    volumes:
+      - ./django_backend:/HabitTracker
     ports:
       - "8080:8080"
     depends_on:
@@ -23,3 +25,4 @@ services:
 
 volumes:
   pgdata:
+  
