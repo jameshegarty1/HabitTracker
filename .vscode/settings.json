@@ -1,4 +1,7 @@
 {
     "cmake.configureOnOpen": true,
-    "cmake.sourceDirectory": "/home/james/projects/HabitTracker/flutter_frontend/linux"
+    "cmake.sourceDirectory": "/home/james/projects/HabitTracker/flutter_frontend/linux",
+    "python.analysis.extraPaths": [
+        "./django_backend/api"
+    ]
 }
