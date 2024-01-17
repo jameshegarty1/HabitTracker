@@ -128,6 +128,7 @@ def getHabit(request, pk):
 @api_view(['POST'])
 def createHabit(request):
     data = request.data
+    logger.info("In createHabit view")
 
     tags = []
     if 'tags' in data and data['tags'] is not None:
@@ -142,11 +143,15 @@ def createHabit(request):
     if habit_serializer.is_valid():
         habit = habit_serializer.save()
         if not habit:
+            logger.error('Failed to create habit')
             return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         if tags:
             habit.tags.set(tags)
-        return Response(habit_serializer.data)
+        logger.info('Habit created successfully')
+        #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
+        Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
     else:
+        logger.error('Serializer errors: %s', habit_serializer.errors)
         return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
@@ -186,14 +191,10 @@ def getHabitRecord(request, pk):
 def createHabitRecord(request):
     serializer = HabitRecordSerializer(data=request.data)
     if serializer.is_valid():
-        habit_id = serializer.validated_data.pop('habitId')
-        try:
-            habit = Habit.objects.get(id=habit_id)
-        except Habit.DoesNotExist:
-            return Response({"detail": "Habit not found"}, status=404)
-        instance = HabitRecord.objects.create(habit=habit, notes=serializer.validated_data.get('notes', ''))
+        instance = serializer.save()
         return Response(HabitRecordSerializer(instance).data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT'])
 def updateHabitRecord(request, pk):

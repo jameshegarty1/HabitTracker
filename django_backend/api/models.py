@@ -72,7 +72,8 @@ class Habit(models.Model):
     )
     tags = models.ManyToManyField(
         'Tag',
-        blank=True
+        blank=True,
+        null=True
         )  # A many-to-many relationship with a Tag model (to be defined).
     updated = models.DateTimeField(
         auto_now=True
