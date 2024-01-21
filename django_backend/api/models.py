@@ -89,7 +89,7 @@ class Habit(models.Model):
 
 
 class HabitRecord(models.Model):
-    habit = models.ForeignKey(
+    habitId = models.ForeignKey(
         Habit,
         on_delete=models.CASCADE
         )
@@ -104,11 +104,11 @@ class HabitRecord(models.Model):
 
     def save(self, *args, **kwargs):
         # Update current_quantity for both finite and infinite habits
-        self.habit.current_quantity += 1
+        self.habitId.current_quantity += 1
         #To-do : handle cases of exceeding the goal
         #if self.habit.habit_type == Habit.FINITE and self.habit.current_quantity > self.habit.goal_quantity:
             #self.habit.current_quantity = self.habit.goal_quantity
-        self.habit.save()
+        self.habitId.save()
         super().save(*args, **kwargs)
     
     class Meta:
