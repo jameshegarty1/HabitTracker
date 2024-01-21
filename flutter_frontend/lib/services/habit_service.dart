@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_frontend/main.dart';
 import 'package:flutter_frontend/models/habit_execution.dart';
 import 'package:http/http.dart';
 import 'package:flutter_frontend/utils/urls.dart';
@@ -10,35 +11,44 @@ class HabitService {
   HabitService({required this.client});
 
   Future<void> createHabit(Habit habit) async {
+    final habitData = habit.toMap();
+    logger.d('Creating habit with data: $habitData');
+
     final response = await client.post(
       createUrl(),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(habit.toMap()), // Convert habit to map then to JSON
+      body: jsonEncode(habitData), // Convert habit to map then to JSON
     );
 
+    logger.d('Response for creating habit: Status code ${response.statusCode}, Body: ${response.body}');
+
     if (response.statusCode == 200) {
-      print('Habit created successfully');
+      logger.i('Habit created successfully');
     } else {
-      print('Failed to create habit. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      logger.e('Failed to create habit. Status code: ${response.statusCode}');
+      logger.d('Response body: ${response.body}');
     }
   }
 
   Future<List<Habit>> retrieveHabits() async {
+    logger.d('Retrieving habits');
     final response = await client.get(retrieveUrl());
+
+    logger.d('Response for retrieving habits: Status code ${response.statusCode}, Body: ${response.body}');
 
     if (response.statusCode == 200) {
       Iterable list = json.decode(response.body);
       return list.map((habit) => Habit.fromMap(habit)).toList();
     } else {
-      print('Failed to retrieve habits. Status code: ${response.statusCode}');
+      logger.e('Failed to retrieve habits. Status code: ${response.statusCode}');
       throw Exception('Failed to retrieve habits');
     }
   }
 
   Future<void> updateHabit(Habit habit) async {
+    logger.d('Updating habit with ID: ${habit.id}');
     final response = await client.put(
       updateUrl(
           habit.id!), // Assuming updateUrl takes habit's id as a parameter
@@ -48,22 +58,28 @@ class HabitService {
       body: jsonEncode(habit.toMap()),
     );
 
+    logger.d('Response for updating habit: Status code ${response.statusCode}, Body: ${response.body}');
+
     if (response.statusCode != 200) {
-      print('Failed to update habit. Status code: ${response.statusCode}');
+      logger.e('Failed to update habit. Status code: ${response.statusCode}');
       throw Exception('Failed to update habit');
     }
   }
 
   Future<void> deleteHabit(int id) async {
+    logger.d('Deleting habit with ID: $id');
     final response = await client.delete(deleteUrl(id));
 
+    logger.d('Response for deleting habit: Status code ${response.statusCode}, Body: ${response.body}');
+
     if (response.statusCode != 200) {
-      print('Failed to delete habit. Status code: ${response.statusCode}');
+      logger.e('Failed to delete habit. Status code: ${response.statusCode}');
       throw Exception('Failed to delete habit');
     }
   }
 
   Future<void> executeHabit(HabitExecution execution, Habit habit) async {
+    logger.d('Executing habit with ID: ${habit.id}');
     final exec_response = await client.post(
       executeHabitUrl(), // Assuming updateUrl takes habit's id as a parameter
       headers: {
@@ -72,12 +88,13 @@ class HabitService {
       body: jsonEncode(execution.toMap()),
     );
 
+    logger.d('Response for executing habit: Status code ${exec_response.statusCode}, Body: ${exec_response.body}');
     if (exec_response.statusCode == 201) {
-      print('Habit executed successfully');
+      logger.i('Habit executed successfully');
     } else {
-      print(
+      logger.e(
           'Failed to execute habit. Status codes: ${exec_response.statusCode}');
-      print('Response body: ${exec_response.body}');
+      logger.d('Response body: ${exec_response.body}');
     }
   }
 }

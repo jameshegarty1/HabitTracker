@@ -1,7 +1,7 @@
 // urls.dart
 
 const String baseUrl =
-    "http://192.168.0.24:8085"; // Replace with your base API URL
+    "http://192.168.0.23:8085"; // Replace with your base API URL
 
 // Habit API paths
 const String habitPath = "/habits/";

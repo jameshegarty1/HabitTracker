@@ -1,94 +1,79 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/models/habit.dart';
-import 'package:flutter_frontend/services/habit_service.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/views/create_habit.dart';
-import 'package:http/http.dart' as http;
-
 import '../utils/dialog_utils.dart';
+import '../main.dart';
 import 'detail_habit.dart';
 
-class HabitListView extends StatefulWidget {
-  final http.Client client;
-  const HabitListView({required this.client, Key? key}) : super(key: key);
-
-  @override
-  _HabitListViewState createState() => _HabitListViewState();
-}
-
-class _HabitListViewState extends State<HabitListView> {
-  late HabitService habitService;
-  List<Habit> habits = [];
-
-  @override
-  void initState() {
-    super.initState();
-    habitService = HabitService(client: widget.client);
-    _refreshHabits();
-  }
-
-  Future<void> _refreshHabits() async {
-    try {
-      habits = await habitService.retrieveHabits();
-      setState(() {});
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+class HabitListView extends StatelessWidget {
+  const HabitListView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    logger.d('Building HabitListView');
+    
     return Scaffold(
       appBar: AppBar(title: Text("My Habits")),
       body: RefreshIndicator(
-        onRefresh: _refreshHabits,
-        child: ListView.builder(
-          itemCount: habits.length,
-          itemBuilder: (context, index) {
-            var habit = habits[index];
-            return ExpansionTile(
-              title: Text(habit.name),
-              trailing: IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: () async {
-                    bool? executed =
-                        await confirmExecution(context, habit, habitService);
-                    if (executed) {
-                      _refreshHabits();
-                    }
-                  }),
-              children: [
-                ListTile(
-                  title: Text('Details, tap to view more'),
-                  onTap: () async {
-                    bool? refresh =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HabitDetailView(
-                        habit: habit,
-                        habitService: habitService,
-                      ),
-                    ));
+        onRefresh: () {
+            logger.d('Refreshing habits...');
+            return context.read<HabitProvider>().fetchHabits();
+        },
+        child: Consumer<HabitProvider>(
+          builder: (context, habitProvider, child) {
+            logger.d('Number of habits: ${habitProvider.habits.length}');
+            return ListView.builder(
+              itemCount: habitProvider.habits.length,
+              itemBuilder: (context, index) {
+                var habit = habitProvider.habits[index];
+                logger.d('Building item $index: ${habit.toString()}');
+                return ExpansionTile(
+                  title: Text(habit.name),
+                  trailing: IconButton(
+                    icon: Icon(Icons.check),
+                    onPressed: () async {
+                      logger.d('Executing habit with ID: ${habit.id}');
+                      bool? executed = await confirmExecution(context, habit);
+                      if (executed) {
+                        logger.d('Habit executed. Refreshing habits');
+                        habitProvider.fetchHabits();
+                      }
+                    },
+                  ),
+                  children: [
+                    ListTile(
+                      title: Text('Details, tap to view more'),
+                      onTap: () async {
+                        logger.d('Navigating to details of habit ID: ${habit.id}');
+                        bool? refresh = await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => HabitDetailView(habit: habit),
+                        ));
 
-                    if (refresh ?? false) {
-                      _refreshHabits();
-                    }
-                  },
-                )
-              ],
+                        if (refresh ?? false) {
+                          logger.d('Returning from details. Refreshing habits');
+                          habitProvider.fetchHabits();
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          logger.d('Navigating to Create Habit Page');
           bool? refresh = await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => CreatePage(habitService: habitService),
-            ),
+            MaterialPageRoute(builder: (context) => const CreatePage()),
           );
 
           if (refresh ?? false) {
-            _refreshHabits();
+            logger.d('Returning from Create Habit Page. Refreshing habits');
+            context.read<HabitProvider>().fetchHabits();
           }
         },
         tooltip: 'Add Habit',

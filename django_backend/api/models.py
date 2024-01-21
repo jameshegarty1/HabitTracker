@@ -4,19 +4,19 @@ from enum import Enum
 
 
 class HabitTypeChoices(Enum):
-    INFINITE = 'Infinite'
-    FINITE = 'Finite'
+    INFINITE = 'infinite'
+    FINITE = 'finite'
 
     @classmethod
     def choices(cls):
         return [(key.value, key.name) for key in cls]
 
 class PriorityChoices(Enum):
-    CRITICAL = 'Critical'
-    HIGH = 'High'
-    MEDIUM = 'Medium'
-    LOW = 'Low'
-    NONE = 'None'
+    CRITICAL = 'critical'
+    HIGH = 'high'
+    MEDIUM = 'medium'
+    LOW = 'low'
+    NONE = 'none'
 
     @classmethod
     def choices(cls):
@@ -73,7 +73,6 @@ class Habit(models.Model):
     tags = models.ManyToManyField(
         'Tag',
         blank=True,
-        null=True
         )  # A many-to-many relationship with a Tag model (to be defined).
     updated = models.DateTimeField(
         auto_now=True

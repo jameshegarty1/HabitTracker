@@ -9,7 +9,7 @@ services:
     volumes:
       - ./django_backend:/HabitTracker
     ports:
-      - "192.168.0.24:8085:8085"
+      - "8085:8085"
     depends_on:
       - db
   db:

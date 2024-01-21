@@ -14,12 +14,13 @@ class HabitRecordSerializer(serializers.ModelSerializer):
 
 
 class HabitSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, required=False)
+    tags = TagSerializer(many=True, required=False, allow_null=True, default=[])
 
 
     class Meta:
         model = Habit
         fields = ['id', 'name', 'description', 'tags', 'habit_type', 'goal_quantity', 'current_quantity', 'start_date', 'end_date', 'notification_time', 'priority', 'parent_habit']
+        extra_kwargs = {'tags': {'required': False}}
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags', None)
