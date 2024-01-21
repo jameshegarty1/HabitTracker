@@ -129,12 +129,14 @@ def getHabit(request, pk):
 def createHabit(request):
     data = request.data
     logger.info("In createHabit view")
+    logger.debug(f"Received data for new habit: {data}")
 
     tags = []
     if 'tags' in data and data['tags'] is not None:
         tags_data = data['tags']
         try:
             tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
+            logger.debug(f"Processed tags: {tags}")
         except Exception as e:
             return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/services/habit_service.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_frontend/providers/habit_provider.dart';
 import '../models/habit.dart';
+import '../main.dart';
 
 Future<bool> confirmDeletion(
-    BuildContext context, Habit habit, HabitService habitService) async {
+    BuildContext context, Habit habit) async {
   bool? result = await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -30,20 +32,19 @@ Future<bool> confirmDeletion(
 
   if (result ?? false) {
     // Proceed with deletion
-    await habitService.deleteHabit(habit.id!);
+    await Provider.of<HabitProvider>(context, listen: false).deleteHabit(habit.id!);
     return true;
   }
   return false;
 }
 
 Future<bool> confirmExecution(
-    BuildContext context, Habit habit, HabitService habitService) async {
+    BuildContext context, Habit habit) async {
   try {
     var execution = habit.executeHabit();
-    var updatedHabit = await habitService.executeHabit(execution, habit);
     return true;
   } catch (e) {
-    print('Error executing the habit: $e');
+    logger.e('Error executing the habit: $e');
     showDialog(
       context: context,
       builder: (BuildContext context) {

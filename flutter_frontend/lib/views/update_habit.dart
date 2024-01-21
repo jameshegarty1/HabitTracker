@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_frontend/models/habit.dart';
+import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/widgets/habit_form_widget.dart';
-import 'package:flutter_frontend/services/habit_service.dart';
 
-class UpdatePage extends StatefulWidget {
-  final HabitService habitService;
+class UpdatePage extends StatelessWidget {
   final Habit habit;
 
   UpdatePage({
-    required this.habitService,
     required this.habit,
     Key? key,
   }) : super(key: key);
-
-  @override
-  _UpdatePageState createState() => _UpdatePageState();
-}
-
-class _UpdatePageState extends State<UpdatePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +22,10 @@ class _UpdatePageState extends State<UpdatePage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: HabitFormWidget(
-            initialHabit: widget.habit,
+            initialHabit: habit,
             onFormSubmit: (updatedHabit) async {
-              Habit habitToUpdate = updatedHabit.copyWith(id: widget.habit.id);
-              // Handle the form submission
               try {
-                await widget.habitService.updateHabit(habitToUpdate);
+                await Provider.of<HabitProvider>(context, listen: false).updateHabit(updatedHabit);
                 Navigator.of(context).pop(true); // Go back after updating
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Habit updated successfully!')),

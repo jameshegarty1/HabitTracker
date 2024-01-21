@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_frontend/models/habit.dart';
-import 'package:flutter_frontend/services/habit_service.dart';
+import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/utils/utils.dart';
 import 'package:flutter_frontend/views/update_habit.dart';
 
@@ -8,11 +9,9 @@ import '../utils/dialog_utils.dart';
 
 class HabitDetailView extends StatelessWidget {
   final Habit habit;
-  final HabitService habitService; // <- Add this
 
   HabitDetailView({
     required this.habit,
-    required this.habitService, // <- Add this
   });
 
   @override
@@ -43,6 +42,8 @@ class HabitDetailView extends StatelessWidget {
   }
 
   Widget _actionButtons(BuildContext context) {
+    final habitProvider = Provider.of<HabitProvider>(context, listen: false);
+
     return ListTile(
       title: Text('Actions'),
       trailing: Row(
@@ -52,13 +53,12 @@ class HabitDetailView extends StatelessWidget {
             icon: Icon(Icons.edit),
             onPressed: () async {
               bool? result = await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => UpdatePage(
-                        habitService: habitService,
-                        habit: habit,
-                      )));
+                  builder: (context) => UpdatePage(habit: habit)
+              ));
+
               if (result != null && result) {
-                Navigator.of(context).pop(true);
-              }
+                habitProvider.fetchHabits();                
+              } 
               ;
             },
           ),
@@ -66,12 +66,11 @@ class HabitDetailView extends StatelessWidget {
             icon: Icon(Icons.delete),
             onPressed: () async {
               bool deleted =
-                  await confirmDeletion(context, habit, habitService);
+                  await confirmDeletion(context, habit);
               if (deleted) {
                 // Handle the post-deletion here, e.g., navigate back, show a snack bar, etc.
                 Navigator.of(context).pop(true);
               }
-              ;
             },
           )
         ],
