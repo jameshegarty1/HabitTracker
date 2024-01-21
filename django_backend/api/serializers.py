@@ -7,10 +7,10 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class HabitRecordSerializer(serializers.ModelSerializer):
-    habit = serializers.PrimaryKeyRelatedField(queryset=Habit.objects.all())
+    habitId = serializers.PrimaryKeyRelatedField(queryset=Habit.objects.all())
     class Meta:
         model = HabitRecord
-        fields = ['habit', 'notes']
+        fields = ['habitId', 'notes']
 
 
 class HabitSerializer(serializers.ModelSerializer):

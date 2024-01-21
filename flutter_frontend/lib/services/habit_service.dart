@@ -78,14 +78,14 @@ class HabitService {
     }
   }
 
-  Future<void> executeHabit(HabitExecution execution, Habit habit) async {
-    logger.d('Executing habit with ID: ${habit.id}');
+  Future<void> executeHabit(HabitExecution habitExecution) async {
+    logger.d('Executing habit with ID: ${habitExecution.habitId}');
     final exec_response = await client.post(
       executeHabitUrl(), // Assuming updateUrl takes habit's id as a parameter
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(execution.toMap()),
+      body: jsonEncode(habitExecution.toMap()),
     );
 
     logger.d('Response for executing habit: Status code ${exec_response.statusCode}, Body: ${exec_response.body}');

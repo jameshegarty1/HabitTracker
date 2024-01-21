@@ -81,7 +81,7 @@ class Habit {
             this.created,
             });
 
-    HabitExecution executeHabit() {
+    HabitExecution newExecution() {
         if (id == null) {
             throw Exception('Cannot execute a habit without an ID');
         }
@@ -89,6 +89,7 @@ class Habit {
         // Create an execution instance
         HabitExecution execution = HabitExecution(
                 habitId: id!,
+                note: "test",
                 );
 
         return execution;

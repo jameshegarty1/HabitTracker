@@ -41,7 +41,8 @@ Future<bool> confirmDeletion(
 Future<bool> confirmExecution(
     BuildContext context, Habit habit) async {
   try {
-    var execution = habit.executeHabit();
+    var habitExecution = habit.newExecution();
+    await Provider.of<HabitProvider>(context, listen: false).executeHabit(habitExecution);
     return true;
   } catch (e) {
     logger.e('Error executing the habit: $e');
