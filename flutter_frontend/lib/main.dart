@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_frontend/views/list_habits.dart';
+import 'package:flutter_frontend/views/home.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
+import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/services/habit_service.dart';
+import 'package:flutter_frontend/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
@@ -20,35 +22,31 @@ var logger = Logger(
         );
 
 void main() {
-    initializeDateFormatting().then((_) => runApp(
-                ChangeNotifierProvider(
-                    create: (context) =>
-                    HabitProvider(HabitService(client: http.Client())),
-                    child: const MyApp(),
-                    ),
-                ));
+    initializeDateFormatting().then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
     const MyApp({Key? key}) : super(key: key);
 
     @override
-        Widget build(BuildContext context) {
-            return MultiProvider(
-                    providers: [
-                    ChangeNotifierProvider(
-                        create: (context) =>
-                        HabitProvider(HabitService(client: http.Client())),
-                        ),
-                    ],
-                    child: MaterialApp(
-                        title: 'Habit Tracker',
-                        theme: ThemeData(
-                            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-                            useMaterial3: true,
-                            ),
-                        home: const HabitListView(),
-                        ),
-                    );
-        }
+    Widget build(BuildContext context) {
+        return MultiProvider(
+            providers: [
+                ChangeNotifierProvider(
+                    create: (context) => HabitProvider(HabitService(client: http.Client())),
+                ),
+                ChangeNotifierProvider(
+                    create: (context) => AuthProvider(AuthService(client:http.Client())),
+                ),
+            ],
+            child: MaterialApp(
+                title: 'Habit Tracker',
+                theme: ThemeData(
+                    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+                    useMaterial3: true,
+                ),
+                home: const HomePage(),
+            ),
+        );
+    }
 }
