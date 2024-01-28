@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_frontend/views/home.dart';
+import 'package:flutter_frontend/views/Welcome/home.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/services/habit_service.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_frontend/views/list_habits.dart';
-import 'package:flutter_frontend/views/login_page.dart';
-import 'package:flutter_frontend/views/intro_screen.dart';
+import 'package:flutter_frontend/views/ListView/list_habits.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
+import 'package:flutter_frontend/views/Login/login_screen.dart';
+import 'intro_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,9 +23,9 @@ class HomePage extends StatelessWidget {
             body: Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ));
                 },
                 child: const Text('Login'),
               ),

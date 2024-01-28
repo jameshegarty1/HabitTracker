@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import 'login_signup_page.dart';
-import '../main.dart';
-import 'home.dart';
+import 'package:flutter_frontend/providers/auth_provider.dart';
+import 'package:flutter_frontend/main.dart';
+import 'package:flutter_frontend/views/Login/login_screen.dart';
+import 'components/login_signup_btn.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({Key? key}) : super(key: key);
@@ -30,37 +30,37 @@ class IntroScreen extends StatelessWidget {
           ),
         ),
         PageViewModel(
-          title: "Title of custom body page",
-          bodyWidget: const Background(
-            child: SingleChildScrollView(
+            title: "Title of custom body page",
+            bodyWidget: SingleChildScrollView(
                 child: SafeArea(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                        Expanded(
-                            child: WelcomeImage(),
-                        ),
-                        Expanded(
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                    SizedBox(
-                                        width: 450,
-                                        child: LoginAndSignupBtn(),
-                                    ),
-                                ],
-                            ),
-                        ),
-                    ],
+                    child: Column(
+              mainAxisSize: MainAxisSize.min, // Added this line
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  fit: FlexFit.loose, // Changed from Expanded to Flexible
+                  child: Text("👋", style: TextStyle(fontSize: 100.0)),
                 ),
-            ),
-        ),
-      ),
-    ],
+                Flexible(
+                  fit: FlexFit.loose, // Changed from Expanded to Flexible
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 450,
+                        child: LoginAndSignupBtn(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )))),
+      ],
       onDone: () {
         logger.i("USER_ACTION: Clicked Login/Signup");
         Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginSignupPage()),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
         );
       },
       done: const Text("Login/Signup",
@@ -72,7 +72,7 @@ class IntroScreen extends StatelessWidget {
         // You can also handle skip
         Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginSignupPage()),
+          MaterialPageRoute(builder: (_) => LoginScreen()),
         );
       },
       dotsDecorator: DotsDecorator(

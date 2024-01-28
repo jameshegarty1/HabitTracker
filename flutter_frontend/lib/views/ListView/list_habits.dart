@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
-import 'package:flutter_frontend/views/create_habit.dart';
-import '../utils/dialog_utils.dart';
-import '../main.dart';
+import 'package:flutter_frontend/views/ListView/create_habit.dart';
+import 'package:flutter_frontend/utils/dialog_utils.dart';
+import 'package:flutter_frontend/main.dart';
 import 'detail_habit.dart';
 
 class HabitListView extends StatelessWidget {

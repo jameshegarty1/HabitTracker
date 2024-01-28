@@ -14,4 +14,4 @@ Flutter things to try/add:
 - GoogleFonts
 - SelectableText()
 - Animated icon/container
-- 
+- Use .separated for the ListView

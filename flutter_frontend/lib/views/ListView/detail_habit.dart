@@ -3,9 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_frontend/models/habit.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/utils/utils.dart';
-import 'package:flutter_frontend/views/update_habit.dart';
-
-import '../utils/dialog_utils.dart';
+import 'package:flutter_frontend/views/ListView/update_habit.dart';
+import 'package:flutter_frontend/utils/dialog_utils.dart';
 
 class HabitDetailView extends StatelessWidget {
   final Habit habit;
