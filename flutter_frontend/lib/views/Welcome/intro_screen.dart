@@ -3,8 +3,8 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/main.dart';
-import 'package:flutter_frontend/views/Login/login_screen.dart';
-import 'components/login_signup_btn.dart';
+import 'package:flutter_frontend/views/Welcome/login_screen.dart';
+import 'package:flutter_frontend/views/Welcome/login_signup.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({Key? key}) : super(key: key);
@@ -30,37 +30,18 @@ class IntroScreen extends StatelessWidget {
           ),
         ),
         PageViewModel(
-            title: "Title of custom body page",
-            bodyWidget: SingleChildScrollView(
-                child: SafeArea(
-                    child: Column(
-              mainAxisSize: MainAxisSize.min, // Added this line
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose, // Changed from Expanded to Flexible
-                  child: Text("👋", style: TextStyle(fontSize: 100.0)),
-                ),
-                Flexible(
-                  fit: FlexFit.loose, // Changed from Expanded to Flexible
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 450,
-                        child: LoginAndSignupBtn(),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )))),
+          title: "Title of custom body page",
+          body: "This is the second page!", // Added a body text
+          // Alternatively, use bodyWidget for more custom content:
+          // bodyWidget: Widget(),
+        ),
       ],
       onDone: () {
         logger.i("USER_ACTION: Clicked Login/Signup");
-        Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
+        // To clear intro page uncomment:
+        //Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginSignupScreen()),
         );
       },
       done: const Text("Login/Signup",
@@ -69,10 +50,10 @@ class IntroScreen extends StatelessWidget {
       showSkipButton: true,
       skip: const Text("Skip"),
       onSkip: () {
-        // You can also handle skip
-        Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
+        // To clear intro page uncomment:
+        //Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginScreen()),
+          MaterialPageRoute(builder: (_) => LoginSignupScreen()),
         );
       },
       dotsDecorator: DotsDecorator(

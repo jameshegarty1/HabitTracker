@@ -9,6 +9,7 @@ class AuthProvider with ChangeNotifier {
   bool _hasSeenIntro = false;
 
   AuthProvider(this.authService) {
+    _loadToken();
     _loadIntroStatus();
   }
 
@@ -20,6 +21,12 @@ class AuthProvider with ChangeNotifier {
     _hasSeenIntro = prefs.getBool('hasSeenIntro') ?? false;
   }
 
+  Future<void> _loadToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('authToken');
+    notifyListeners();
+  }
+
   Future<void> setIntroSeen() async {
     _hasSeenIntro = true;
     notifyListeners();
@@ -28,21 +35,46 @@ class AuthProvider with ChangeNotifier {
     debugPrint("AuthProvider: Introduction has been set as seen.");
   }
 
-  Future<void> login(String username, String password) async {
+  Future<bool> login(String username, String password) async {
     try {
-      await authService.login(username, password);
-      notifyListeners();
+      String? token = await authService.login(username, password);
+      if (token != null) {
+        _token = token;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('authToken', token); // Store the token
+        notifyListeners();
+        logger.i('AuthProvider: Login successful, token stored.');
+        return true;
+      }
+      return false;
     } catch (e) {
-      logger.e('error: $e');
+      logger.e('AuthProvider login error: $e');
+      return false;
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
     _token = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('authToken'); // Remove the token from storage
     notifyListeners();
-    // Remove token from storage
-    debugPrint("AuthProvider: User logged out.");
+    logger.i("AuthProvider: User logged out.");
   }
+
+  Future<bool> signup(String username, String password, String email) async {
+  try {
+    bool signupSuccess = await authService.signup(username, password, email);
+    if (signupSuccess) {
+      // If signup was successful, attempt to log in
+      bool loginSuccess = await login(username, password);
+      return loginSuccess;
+    }
+    return false; // Return false if signup was not successful
+  } catch (e) {
+    logger.e('AuthProvider signup error: $e');
+    return false; // Return false if an exception is caught
+  }
+}
 
   // Add other authentication related methods here
 }
