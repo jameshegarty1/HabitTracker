@@ -22,7 +22,6 @@ class HabitService {
       body: jsonEncode(habitData), // Convert habit to map then to JSON
     );
 
-    logger.d('Response for creating habit: Status code ${response.statusCode}, Body: ${response.body}');
 
     if (response.statusCode == 200) {
       logger.i('Habit created successfully');
@@ -35,9 +34,6 @@ class HabitService {
   Future<List<Habit>> retrieveHabits() async {
     logger.d('Retrieving habits');
     final response = await client.get(retrieveUrl());
-
-    logger.d('Response for retrieving habits: Status code ${response.statusCode}, Body: ${response.body}');
-
     if (response.statusCode == 200) {
       Iterable list = json.decode(response.body);
       return list.map((habit) => Habit.fromMap(habit)).toList();
@@ -58,8 +54,6 @@ class HabitService {
       body: jsonEncode(habit.toMap()),
     );
 
-    logger.d('Response for updating habit: Status code ${response.statusCode}, Body: ${response.body}');
-
     if (response.statusCode != 200) {
       logger.e('Failed to update habit. Status code: ${response.statusCode}');
       throw Exception('Failed to update habit');
@@ -69,8 +63,6 @@ class HabitService {
   Future<void> deleteHabit(int id) async {
     logger.d('Deleting habit with ID: $id');
     final response = await client.delete(deleteUrl(id));
-
-    logger.d('Response for deleting habit: Status code ${response.statusCode}, Body: ${response.body}');
 
     if (response.statusCode != 200) {
       logger.e('Failed to delete habit. Status code: ${response.statusCode}');
@@ -88,7 +80,6 @@ class HabitService {
       body: jsonEncode(habitExecution.toMap()),
     );
 
-    logger.d('Response for executing habit: Status code ${exec_response.statusCode}, Body: ${exec_response.body}');
     if (exec_response.statusCode == 201) {
       logger.i('Habit executed successfully');
     } else {

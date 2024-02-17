@@ -17,4 +17,5 @@ Uri executeHabitUrl() => Uri.parse("${baseUrl}${habitRecordPath}create/");
 
 Uri loginUrl() => Uri.parse("$baseUrl/login/");
 Uri signupUrl() => Uri.parse("$baseUrl/signup/");
+Uri logoutUrl() => Uri.parse("$baseUrl/logout/");
 Uri testTokenUrl() => Uri.parse("$baseUrl/test-token/");

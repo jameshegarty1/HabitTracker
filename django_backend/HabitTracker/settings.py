@@ -172,3 +172,8 @@ LOGGING = {
     },
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'user_auth.authentication.ExpiringTokenAuthentication',
+    ],
+}

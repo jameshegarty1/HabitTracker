@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_frontend/main.dart';
 import 'package:flutter_frontend/services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService authService;
+  final storage = FlutterSecureStorage();
   String? _token;
   bool _hasSeenIntro = false;
 
@@ -22,8 +24,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> _loadToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    _token = prefs.getString('authToken');
+    _token = await storage.read(key: 'authToken');
     notifyListeners();
   }
 
@@ -32,34 +33,35 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hasSeenIntro', true);
-    debugPrint("AuthProvider: Introduction has been set as seen.");
+    debugPrint("[AuthProvider] Introduction has been set as seen.");
   }
 
   Future<bool> login(String username, String password) async {
     try {
-      String? token = await authService.login(username, password);
-      if (token != null) {
-        _token = token;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('authToken', token); // Store the token
+      var loginResponse = await authService.login(username, password);
+      if (loginResponse != null){
+        _token = loginResponse;
+        await storage.write(key: 'authToken', value: _token);
         notifyListeners();
-        logger.i('AuthProvider: Login successful, token stored.');
+        logger.i('[AuthProvider] Login successful, token stored.');
         return true;
       }
       return false;
     } catch (e) {
-      logger.e('AuthProvider login error: $e');
+      logger.e('[AuthProvider] login error: $e');
       return false;
     }
   }
 
   Future<void> logout() async {
-    _token = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('authToken'); // Remove the token from storage
-    notifyListeners();
-    logger.i("AuthProvider: User logged out.");
-  }
+    String? token = await storage.read(key: 'authToken');
+    if (token != null) {
+        await authService.logout(token); // Pass the token to AuthService
+        await storage.delete(key: 'authToken'); // Clear the token from secure storage
+        _token = null;
+        notifyListeners();
+        logger.i("[AuthProvider] User logged out.");
+    }  }
 
   Future<bool> signup(String username, String password, String email) async {
   try {

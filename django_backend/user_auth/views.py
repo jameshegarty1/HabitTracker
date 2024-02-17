@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
 from .serializers import UserSerializer
+from .models import ExpiringToken
 
 @api_view(['POST'])
 def signup(request):
@@ -18,7 +19,7 @@ def signup(request):
         user = serializer.save()
         user.set_password(request.data['password'])
         user.save()
-        token, _ = Token.objects.get_or_create(user=user)  # This ensures token creation for the user
+        token, _ = ExpiringToken.objects.get_or_create(user=user)
         return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -29,11 +30,21 @@ def login(request):
     password = request.data.get('password')
     user = authenticate(username=username, password=password)  # Django's built-in authenticate method
     if user:
-        token, created = Token.objects.get_or_create(user=user)
+        token, _ = ExpiringToken.objects.get_or_create(user=user)
         serializer = UserSerializer(user)
         return Response({'token': token.key, 'user': serializer.data})
     else:
         return Response({"error": "Invalid Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    try:
+        ExpiringToken.objects.filter(user=request.user).delete()
+        return Response({"success": "Successfully logged out."}, status=status.HTTP_200_OK)
+    except (AttributeError, ExpiringToken.DoesNotExist):
+        return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])

@@ -9,7 +9,7 @@ class AuthService {
   AuthService({required this.client});
 
   Future<String?> login(String username, String password) async {
-    logger.d('Attempting to login user: $username');
+    logger.d('[AuthService] Attempting to login user: $username');
 
     final response = await client.post(
       loginUrl(),
@@ -17,16 +17,33 @@ class AuthService {
       body: jsonEncode({'username': username, 'password': password}),
     );
 
-    logger.d(
-        'Response for login: Status code ${response.statusCode}, Body: ${response.body}');
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       String? token = data['token'];
-      logger.i('Login successful');
+      logger.i('[AuthService] Login successful for user: $username');
       return token; // Return the token
     } else {
-      logger.e('Failed to login. Status code: ${response.statusCode}');
+      logger.e(
+          '[AuthService] Failed to login. Status code: ${response.statusCode} for user: $username');
       return null;
+    }
+  }
+
+  Future<void> logout(String token) async {
+    logger.d('[AuthService] Attempting to logout...');
+
+    final response = await client.post(
+      logoutUrl(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      logger.i('[AuthService] Logout successful.');
+    } else {
+      logger.e(
+          '[AuthService] Failed to logout. Status code: ${response.statusCode}');
     }
   }
 
@@ -36,11 +53,9 @@ class AuthService {
     final response = await client.post(
       signupUrl(), // Ensure Uri.parse is used with your URL
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username, 'password': password, 'email': email}),
+      body: jsonEncode(
+          {'username': username, 'password': password, 'email': email}),
     );
-
-    logger.d(
-        'Response for signup: Status code ${response.statusCode}, Body: ${response.body}');
 
     if (response.statusCode == 201) {
       logger.i('Signup successful');
@@ -62,10 +77,6 @@ class AuthService {
             'Token $token', // Adjust header according to your API's requirements
       },
     );
-
-    logger.d(
-        'Response for token test: Status code ${response.statusCode}, Body: ${response.body}');
-
     if (response.statusCode == 200) {
       logger.i('Token is valid');
       // Handle valid token
