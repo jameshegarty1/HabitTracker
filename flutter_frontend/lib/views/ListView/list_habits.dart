@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
+import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/views/ListView/create_habit.dart';
 import 'package:flutter_frontend/utils/dialog_utils.dart';
 import 'package:flutter_frontend/main.dart';
@@ -12,13 +13,25 @@ class HabitListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logger.d('Building HabitListView');
-    
+
     return Scaffold(
-      appBar: AppBar(title: Text("My Habits")),
+      appBar: AppBar(
+          title: Text("My Habits"),
+          actions: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () async {
+                      logger.i('[HabitListView] USER_ACTION: Clicked Logout');
+                      await Provider.of<AuthProvider>(context, listen: false).logout();
+                      Navigator.of(context).pushReplacementNamed('/authOptionScreen');
+                  }
+            )
+          ],
+          ),
       body: RefreshIndicator(
         onRefresh: () {
-            logger.d('Refreshing habits...');
-            return context.read<HabitProvider>().fetchHabits();
+          logger.d('Refreshing habits...');
+          return context.read<HabitProvider>().fetchHabits();
         },
         child: Consumer<HabitProvider>(
           builder: (context, habitProvider, child) {
@@ -45,8 +58,10 @@ class HabitListView extends StatelessWidget {
                     ListTile(
                       title: Text('Details, tap to view more'),
                       onTap: () async {
-                        logger.d('Navigating to details of habit ID: ${habit.id}');
-                        bool? refresh = await Navigator.of(context).push(MaterialPageRoute(
+                        logger.d(
+                            'Navigating to details of habit ID: ${habit.id}');
+                        bool? refresh =
+                            await Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => HabitDetailView(habit: habit),
                         ));
 

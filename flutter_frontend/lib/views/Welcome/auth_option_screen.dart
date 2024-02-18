@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/widgets/login_signup_btn.dart'; // Update this import path to where your LoginAndSignupBtn widget is located
 
-class LoginSignupScreen extends StatelessWidget {
-  const LoginSignupScreen({Key? key}) : super(key: key);
+class AuthOptionScreen extends StatelessWidget {
+  const AuthOptionScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

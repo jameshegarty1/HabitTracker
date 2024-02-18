@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_frontend/providers/auth_provider.dart'; // Adjust the import path to where your AuthProvider is locatedclass SignUpScreen extends StatefulWidget {
+import 'package:flutter_frontend/providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -24,24 +24,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _signup(BuildContext context) async {
     if (_passwordController.text == _confirmPasswordController.text) {
-      final bool signupSuccess =
-          await Provider.of<AuthProvider>(context, listen: false)
-              .signup(_usernameController.text, _passwordController.text, "test@test.com");
+      final result = await Provider.of<AuthProvider>(context, listen: false)
+        .signup(_usernameController.text, _passwordController.text, "test@test.com");
 
-      if (signupSuccess) {
-        // Show a success message
+      if (result['success'])  {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Signup successful! Logging in...')),
         );
+        Navigator.of(context).pushReplacementNamed('/home');
 
-        // Perform further actions like navigating to the home screen
-        // Navigator.of(context).pushReplacementNamed('/home');
       } else {
-        // Show an error if signup failed
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signup failed. Please try again.')),
-        );
-      }
+        SnackBar(content: Text(result['message'])),
+      );      }
     } else {
       // Show an error if passwords don't match
       ScaffoldMessenger.of(context).showSnackBar(

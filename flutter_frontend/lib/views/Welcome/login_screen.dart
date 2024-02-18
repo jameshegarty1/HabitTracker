@@ -1,8 +1,45 @@
 import 'package:flutter/material.dart';
-// Import other necessary packages here
+import 'package:provider/provider.dart';
+import 'package:flutter_frontend/providers/auth_provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login(BuildContext context) async {
+    final bool loginSuccess =
+        await Provider.of<AuthProvider>(context, listen: false)
+            .login(_usernameController.text, _passwordController.text);
+
+    if (loginSuccess) {
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login successful!')),
+      );
+
+      // Perform further actions like navigating to the home screen
+      Navigator.of(context).pushReplacementNamed('/listView');
+    } else {
+      // Show an error if signup failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +58,9 @@ class LoginScreen extends StatelessWidget {
           children: [
             // Email Input Field
             TextFormField(
+              controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: 'Email',
+                labelText: 'Username',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -30,6 +68,7 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 16),
             // Password Input Field
             TextFormField(
+              controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
@@ -39,9 +78,7 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 24),
             // Login Button
             ElevatedButton(
-              onPressed: () {
-                // Handle Login Logic
-              },
+              onPressed: () => _login(context),
               child: const Text('Login'),
             ),
           ],

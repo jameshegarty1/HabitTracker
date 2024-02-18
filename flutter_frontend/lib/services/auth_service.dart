@@ -47,8 +47,8 @@ class AuthService {
     }
   }
 
-  Future<bool> signup(String username, String password, String email) async {
-    logger.d('Attempting to signup user: $username');
+  Future<Map<String, dynamic>> signup(String username, String password, String email) async {
+    logger.d('[AuthService] Attempting to signup user: $username');
 
     final response = await client.post(
       signupUrl(), // Ensure Uri.parse is used with your URL
@@ -58,16 +58,19 @@ class AuthService {
     );
 
     if (response.statusCode == 201) {
-      logger.i('Signup successful');
-      return true; // Return true if signup is successful
+      logger.i('[AuthService] Signup successful for user: $username');
+      var data = json.decode(response.body);
+      return {'success': true, 'data': data, 'message': 'Signup successful'};
     } else {
-      logger.e('Failed to signup. Status code: ${response.statusCode}');
-      return false; // Return false if signup is not successful
+      logger.e('[AuthService] Failed to signup. Status code: ${response.statusCode}');
+      var data = json.decode(response.body);
+      String errorMessage = data['error'] ?? 'Unknown error occurred during signup.';
+      return {'success': false, 'message': errorMessage};
     }
   }
 
   Future<void> testToken(String token) async {
-    logger.d('Testing token');
+    logger.d('[AuthService] Testing token');
 
     final response = await client.get(
       testTokenUrl(), // Replace with your test token API endpoint
@@ -78,10 +81,10 @@ class AuthService {
       },
     );
     if (response.statusCode == 200) {
-      logger.i('Token is valid');
+      logger.i('[AuthService] Token is valid');
       // Handle valid token
     } else {
-      logger.e('Token test failed. Status code: ${response.statusCode}');
+      logger.e('[AuthService] Token test failed. Status code: ${response.statusCode}');
     }
   }
 

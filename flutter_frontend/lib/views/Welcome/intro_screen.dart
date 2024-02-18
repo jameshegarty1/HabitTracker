@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/main.dart';
 import 'package:flutter_frontend/views/Welcome/login_screen.dart';
-import 'package:flutter_frontend/views/Welcome/login_signup.dart';
+import 'package:flutter_frontend/views/Welcome/auth_option_screen.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({Key? key}) : super(key: key);
@@ -41,7 +41,7 @@ class IntroScreen extends StatelessWidget {
         // To clear intro page uncomment:
         //Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginSignupScreen()),
+          MaterialPageRoute(builder: (_) => AuthOptionScreen()),
         );
       },
       done: const Text("Login/Signup",
@@ -53,7 +53,7 @@ class IntroScreen extends StatelessWidget {
         // To clear intro page uncomment:
         //Provider.of<AuthProvider>(context, listen: false).setIntroSeen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => LoginSignupScreen()),
+          MaterialPageRoute(builder: (_) => AuthOptionScreen()),
         );
       },
       dotsDecorator: DotsDecorator(

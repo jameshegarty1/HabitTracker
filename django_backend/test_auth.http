@@ -2,9 +2,9 @@ POST http://127.0.0.1:8085/signup/
 Content-Type: application/json
 
 {
-  "username": "adam12",
+  "username": "phil1",
   "password": "Pass1234!",
-  "email": "adam12@mail.com"
+  "email": "phil@mail.com"
 }
 
 ###
@@ -13,7 +13,7 @@ POST http://127.0.0.1:8085/login/
 Content-Type: application/json
 
 {
-  "username": "adam12",
+  "username": "phil1",
   "password": "Pass1234!"
 }
 
@@ -21,10 +21,10 @@ Content-Type: application/json
 
 GET http://127.0.0.1:8085/test_token/
 Content-Type: application/json
-Authorization: Token 134544c66592c7be325ae9b921ef2fe5a7e5fb6d
+Authorization: Token 416b18c46c4c2be3187b63fcc04eea5f33618e05
 
 ###
 POST http://127.0.0.1:8085/logout/
 Content-Type: application/json
-Authorization: Token 134544c66592c7be325ae9b921ef2fe5a7e5fb6d
+Authorization: Token 416b18c46c4c2be3187b63fcc04eea5f33618e05
 

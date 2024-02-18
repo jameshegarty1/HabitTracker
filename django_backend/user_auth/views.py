@@ -14,6 +14,10 @@ from .models import ExpiringToken
 
 @api_view(['POST'])
 def signup(request):
+    username = request.data.get('username')
+    if User.objects.filter(username=username).exists():
+        return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()

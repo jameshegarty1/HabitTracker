@@ -63,20 +63,23 @@ class AuthProvider with ChangeNotifier {
         logger.i("[AuthProvider] User logged out.");
     }  }
 
-  Future<bool> signup(String username, String password, String email) async {
+  Future<Map<String, dynamic>> signup(String username, String password, String email) async {
   try {
-    bool signupSuccess = await authService.signup(username, password, email);
-    if (signupSuccess) {
-      // If signup was successful, attempt to log in
+    var result = await authService.signup(username, password, email);
+    if (result['success']){
       bool loginSuccess = await login(username, password);
-      return loginSuccess;
+      if (loginSuccess) {
+        return {'success': true, 'message': 'Signup and login successful'};
+      } else {
+        return {'success': false, 'message': 'Login failed after successful signup'};
+      }
+    } else {
+      logger.e('AuthProvider signup error: ${result['message']}');
+      return {'success': false, 'message': result['message']};
     }
-    return false; // Return false if signup was not successful
   } catch (e) {
-    logger.e('AuthProvider signup error: $e');
-    return false; // Return false if an exception is caught
+    logger.e('AuthProvider signup exception: $e');
+    return {'success': false, 'message': 'An unexpected error occurred'};
   }
 }
-
-  // Add other authentication related methods here
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_frontend/views/Welcome/auth_option_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_frontend/views/Welcome/home.dart';
+import 'package:flutter_frontend/views/Welcome/gateway_screen.dart';
 import 'package:flutter_frontend/providers/habit_provider.dart';
 import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/services/habit_service.dart';
 import 'package:flutter_frontend/services/auth_service.dart';
 import 'package:flutter_frontend/utils/constants.dart';
+import 'package:flutter_frontend/views/Welcome/login_screen.dart';
+import 'package:flutter_frontend/views/ListView/list_habits.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:logger/logger.dart';
@@ -68,7 +71,13 @@ class MyApp extends StatelessWidget {
                 borderSide: BorderSide.none,
               ),
             )),
-        home: const HomePage(),
+        home: const Gateway(),
+        routes: {
+            '/authOptionScreen': (context) => AuthOptionScreen(),
+            '/loginScreen': (context) => LoginScreen(),
+            '/listView': (context) => HabitListView(),
+            // Define other routes here
+        },
       ),
     );
   }

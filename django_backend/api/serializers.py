@@ -31,3 +31,15 @@ class HabitSerializer(serializers.ModelSerializer):
             instance.tags.set(tags)
         
         return instance
+
+    def create(self, validated_data):
+        tags_data = validated_data.pop('tags', [])
+        habit = Habit.objects.create(**validated_data)
+
+        # Handle tags, ensuring no attempt to iterate over None
+        if tags_data is not None:
+            for tag_data in tags_data:
+                tag, created = Tag.objects.get_or_create(name=tag_data['name'])
+                habit.tags.add(tag)
+
+        return habit
