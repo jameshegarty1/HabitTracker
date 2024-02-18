@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'api.apps.ApiConfig',
+    'user_auth.apps.UserAuthConfig',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 
@@ -170,3 +172,8 @@ LOGGING = {
     },
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'user_auth.authentication.ExpiringTokenAuthentication',
+    ],
+}

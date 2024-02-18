@@ -1,0 +1,17 @@
+Flutter things to try/add:
+
+- Introduction screen
+- Flexible widget
+- Circle Avatar for image
+- Splash screen
+- Visibility widget
+- SafeArea
+- SliverAppBar
+- FutureBuilder() for load progress indicator
+- Cupertino iOS
+- Platform checking
+- MediaQuery screen size
+- GoogleFonts
+- SelectableText()
+- Animated icon/container
+- Use .separated for the ListView

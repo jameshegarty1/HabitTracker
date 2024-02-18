@@ -1,0 +1,33 @@
+GET http://127.0.0.1:8085/habits/
+Content-Type: application/json
+
+POST http://127.0.0.1:8085/habits/create/
+Content-Type: application/json
+
+{
+  "name": "Read",
+  "description": "Read 20 pages a day",
+  "habit_type": "finite",
+  "goal_quantity": 20,
+  "tags": ["Education", "Self-improvement"]
+}
+
+
+GET http://127.0.0.1:8085/habits/1/
+Content-Type: application/json
+
+
+PUT http://127.0.0.1:8085/habits/1/update/
+Content-Type: application/json
+
+{
+  "name": "Read",
+  "description": "Read 30 pages a day",
+  "habit_type": "finite",
+  "goal_quantity": 30,
+  "tags": ["Education", "Self-improvement"]
+}
+
+DELETE http://127.0.0.1:8085/habits/1/delete/
+Content-Type: application/json
+

@@ -10,3 +10,4 @@ django_backend/.coverage
 django_backend/debug.log
 .coverage
 **/tmp
+**/__pycache__
