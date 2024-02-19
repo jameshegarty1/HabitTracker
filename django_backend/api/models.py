@@ -1,15 +1,12 @@
 from django.db import models
 from enum import Enum
 
-
-
-class HabitTypeChoices(Enum):
-    INFINITE = 'infinite'
-    FINITE = 'finite'
-
-    @classmethod
-    def choices(cls):
-        return [(key.value, key.name) for key in cls]
+class FrequencyPeriodChoices(models.TextChoices):
+    HOURLY = 'hourly', 'Hourly'
+    DAILY = 'daily', 'Daily'
+    WEEKLY = 'weekly', 'Weekly'
+    MONTHLY = 'monthly', 'Monthly'
+    YEARLY = 'yearly', 'Yearly'
 
 class PriorityChoices(Enum):
     CRITICAL = 'critical'
@@ -40,30 +37,23 @@ class Habit(models.Model):
         null=True,
         blank=True
         )
-    habit_type = models.CharField(
-        max_length=10,
-        choices=HabitTypeChoices.choices(),
-        default=HabitTypeChoices.INFINITE.value
-        )
-    goal_quantity = models.PositiveIntegerField(
-        null=True, 
-        blank=True
-        )  # For finite habits only
     current_quantity = models.PositiveIntegerField(
         default=0
-        )  # For finite habits only
-    start_date = models.DateField(
-        null=True,
-        blank=True
-        )
-    end_date = models.DateField(
-        null=True,
-        blank=True
         )
     notification_time = models.TimeField(
         null=True, 
         blank=True
         )
+    frequency_count = models.PositiveIntegerField(
+        default=1,
+        help_text="How many times the habit should be completed within the specified period."
+    )
+    frequency_period = models.CharField(
+        max_length=10,
+        choices=FrequencyPeriodChoices.choices,
+        default=FrequencyPeriodChoices.DAILY,
+        help_text="The period over which the habit frequency is calculated."
+    )
     priority = models.CharField(
         max_length=8,
         choices=PriorityChoices.choices(),
