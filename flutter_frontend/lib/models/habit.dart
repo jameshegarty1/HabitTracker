@@ -54,6 +54,11 @@ FrequencyPeriod stringToFrequencyPeriod(String periodString) {
   );
 }
 
+String formatFrequency(int count, FrequencyPeriod period) {
+  String periodString = frequencyPeriodToString(period).toLowerCase(); // Convert the period to a string
+  return "${count}x $periodString"; // Combine count and period into a single string
+}
+
 class Habit {
   int? id;
   int? parentHabitId;
