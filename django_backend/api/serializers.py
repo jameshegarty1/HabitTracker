@@ -19,7 +19,7 @@ class HabitSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Habit
-        fields = ['id', 'name', 'description', 'tags', 'current_quantity', 'notification_time', 'priority']
+        fields = ['id', 'name', 'description', 'tags', 'current_quantity', 'notification_time', 'priority', 'frequency_count', 'frequency_period']
         extra_kwargs = {'tags': {'required': False}}
 
     def update(self, instance, validated_data):
