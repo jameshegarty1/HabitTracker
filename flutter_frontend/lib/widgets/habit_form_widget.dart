@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_frontend/models/habit.dart';
+import './icons.dart';
 
 class HabitFormWidget extends StatefulWidget {
   final Function(Habit) onFormSubmit;
@@ -23,14 +23,10 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
     if (widget.initialHabit != null) {
       nameController.text = widget.initialHabit!.name;
       descriptionController.text = widget.initialHabit!.description ?? "";
-      _selectedHabitType = widget.initialHabit!.habitType;
-      _selectedEndDate = widget.initialHabit!.endDate;
-      endDateController.text = _selectedEndDate == null
-          ? ''
-          : "${_selectedEndDate!.toLocal()}".split(' ')[0];
-      goalQuantityController.text =
-          widget.initialHabit!.goalQuantity?.toString() ?? '';
       _selectedPriority = widget.initialHabit?.priority ?? Priority.none;
+      _frequencyCount = widget.initialHabit?.frequencyCount ?? 1;
+      _selectedFrequencyPeriod =
+          widget.initialHabit?.frequencyPeriod ?? FrequencyPeriod.daily;
     }
   }
 
@@ -38,19 +34,15 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
   void dispose() {
     nameController.dispose();
     descriptionController.dispose();
-    endDateController.dispose();
-    goalQuantityController.dispose();
     super.dispose();
   }
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  HabitType? _selectedHabitType;
-  final TextEditingController endDateController = TextEditingController();
-  final TextEditingController goalQuantityController = TextEditingController();
-  DateTime? _selectedEndDate;
   Priority? _selectedPriority;
-
+  int _frequencyCount = 1; // Default frequency count
+  FrequencyPeriod _selectedFrequencyPeriod = FrequencyPeriod.daily;
+  /*
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
         context: context,
@@ -65,6 +57,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
       });
     }
   }
+  */
 
   void _submitForm() {
     Habit habit;
@@ -72,23 +65,19 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
     if (widget.initialHabit != null) {
       // We are in edit mode
       habit = widget.initialHabit!.copyWith(
-        name: nameController.text,
-        description: descriptionController.text,
-        habitType: _selectedHabitType ?? HabitType.infinite,
-        endDate: _selectedEndDate,
-        goalQuantity: int.tryParse(goalQuantityController.text),
-        priority: _selectedPriority,
-      );
+          name: nameController.text,
+          description: descriptionController.text,
+          priority: _selectedPriority,
+          frequencyCount: _frequencyCount,
+          frequencyPeriod: _selectedFrequencyPeriod);
     } else {
       // We are in create mode
       habit = Habit(
-        name: nameController.text,
-        description: descriptionController.text,
-        habitType: _selectedHabitType ?? HabitType.infinite,
-        endDate: _selectedEndDate,
-        goalQuantity: int.tryParse(goalQuantityController.text),
-        priority: _selectedPriority ?? Priority.none,
-      );
+          name: nameController.text,
+          description: descriptionController.text,
+          priority: _selectedPriority ?? Priority.none,
+          frequencyCount: _frequencyCount,
+          frequencyPeriod: _selectedFrequencyPeriod);
     }
 
     widget.onFormSubmit(habit);
@@ -98,75 +87,110 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: "Name",
-              ),
+        child: Column(children: [
+          TextField(
+            controller: nameController,
+            decoration: InputDecoration(
+              labelText: "Name",
             ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(
-                labelText: "Description",
-              ),
+          ),
+          SizedBox(height: 16.0),
+          TextField(
+            controller: descriptionController,
+            decoration: InputDecoration(
+              labelText: "Description",
             ),
-            DropdownButton<Priority>(
-              value: _selectedPriority,
-              hint: Text('Choose Priority'),
-              onChanged: (Priority? newValue) {
-                setState(() {
-                  _selectedPriority = newValue;
-                });
-              },
-              items: Priority.values
-                  .map<DropdownMenuItem<Priority>>((Priority value) {
-                return DropdownMenuItem<Priority>(
-                  value: value,
-                  child: Text(priorityToString(value)),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 16.0),
-            DropdownButton<HabitType>(
-              value: _selectedHabitType,
-              hint: Text('Choose Habit Type'),
-              onChanged: (HabitType? newValue) {
-                setState(() {
-                  _selectedHabitType = newValue;
-                });
-              },
-              items: HabitType.values
-                  .map<DropdownMenuItem<HabitType>>((HabitType value) {
-                return DropdownMenuItem<HabitType>(
-                  value: value,
-                  child:
-                      Text(value == HabitType.infinite ? 'Infinite' : 'Finite'),
-                );
-              }).toList(),
-            ),
-            if (_selectedHabitType == HabitType.finite) ...[
-              TextField(
-                controller: goalQuantityController,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                decoration: InputDecoration(
-                  labelText: "Goal Quantity",
+          ),
+          ExpansionTile(title: const Text("Advanced"), children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0), // Adjust padding as needed
+                child: Text(
+                  'Priority', // Your title
                 ),
               ),
-              SizedBox(height: 16.0),
-              ListTile(
-                title: Text(
-                    "End Date: ${_selectedEndDate == null ? 'Not set' : endDateController.text}"),
-                trailing: Icon(Icons.calendar_today),
-                onTap: () => _selectDate(context),
+              Row(
+                children: Priority.values.map((priority) {
+                  final priorityLabel = priorityToString(priority);
+                  return Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Tooltip(
+                        message: priorityLabel,
+                        child: ChoiceChip(
+                            label: Icon(
+                              priorityIcons[priority],
+                              color: _selectedPriority == priority
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : Theme.of(context).iconTheme.color,
+                            ),
+                            selected: _selectedPriority == priority,
+                            onSelected: (bool selected) {
+                              setState(() {
+                                _selectedPriority = priority;
+                              });
+                            },
+                            backgroundColor:
+                                Theme.of(context).chipTheme.backgroundColor,
+                            selectedColor:
+                                Theme.of(context).colorScheme.primary,
+                            showCheckmark: false)),
+                  ));
+                }).toList(),
               ),
-              SizedBox(height: 16.0),
-            ],
+            ]),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.all(8.0), // Adjust padding as needed
+                  child: Text(
+                    'Frequency builder', // Your title
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Frequency Count: $_frequencyCount"),
+                      Slider(
+                        min: 1,
+                        max: 10, // Adjust based on your requirements
+                        divisions: 9,
+                        value: _frequencyCount.toDouble(),
+                        label: '$_frequencyCount',
+                        onChanged: (double value) {
+                          setState(() {
+                            _frequencyCount = value.round();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Wrap(
+                  spacing: 8.0,
+                  children: FrequencyPeriod.values.map((frequencyPeriod) {
+                    final frequencyLabel =
+                        frequencyPeriodToString(frequencyPeriod);
+                    return ChoiceChip(
+                      label: Text(frequencyLabel),
+                      selected: _selectedFrequencyPeriod == frequencyPeriod,
+                      onSelected: (bool selected) {
+                        setState(() {
+                          _selectedFrequencyPeriod = frequencyPeriod;
+                        });
+                      },
+                      backgroundColor:
+                          Theme.of(context).chipTheme.backgroundColor,
+                      selectedColor: Theme.of(context).colorScheme.primary,
+                    );
+                  }).toList(),
+                )
+              ],
+            ),
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _submitForm,
@@ -174,7 +198,7 @@ class _HabitFormWidgetState extends State<HabitFormWidget> {
                   ? "Create habit"
                   : "Update habit"),
             ),
-          ],
-        ));
+          ])
+        ]));
   }
 }

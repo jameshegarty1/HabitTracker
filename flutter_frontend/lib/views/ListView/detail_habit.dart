@@ -21,12 +21,9 @@ class HabitDetailView extends StatelessWidget {
         children: [
           _buildTile('Description', habit.description ?? 'No description'),
           _buildTile('Priority', priorityToString(habit.priority)),
-          _buildTile('Habit Type', habit.habitType.toString().split('.').last),
-          if (habit.goalQuantity != null)
-            _buildTile('Goal Quantity', habit.goalQuantity.toString()),
-          if (habit.endDate != null)
-            _buildTile('End Date', formatDate(habit.endDate!)),
           _buildTile('Current Quantity', habit.currentQuantity.toString()),
+          _buildTile('Frequency', formatFrequency(habit.frequencyCount, habit.frequencyPeriod)),
+
           _actionButtons(context), // <- Updated this
         ],
       ),
@@ -58,7 +55,6 @@ class HabitDetailView extends StatelessWidget {
               if (result != null && result) {
                 habitProvider.fetchHabits();                
               } 
-              ;
             },
           ),
           IconButton(
