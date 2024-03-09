@@ -23,7 +23,21 @@ class HabitProvider with ChangeNotifier {
     }
   }
 
-
+  Future<void> fetchHabitPerformance() async {
+    try {
+      final performanceData = await habitService.retrieveHabitPerformance();
+      // Assuming retrieveHabitPerformance returns a map of habit IDs to performance counts
+      for (var habit in _habits) {
+        // Update each habit with its current period quantity, if available
+        if (performanceData.containsKey(habit.id)) {
+          habit.periodQuantity = performanceData[habit.id];
+        }
+      }
+      notifyListeners();
+    } catch (e) {
+      logger.e('Error fetching habit performance: $e');
+    }
+  }
 
   Future<void> createHabit(Habit habit) async {
     try {
@@ -62,8 +76,5 @@ class HabitProvider with ChangeNotifier {
     } catch (e) {
       logger.e('error: $e');
     }
-      
   }
-
 }
-

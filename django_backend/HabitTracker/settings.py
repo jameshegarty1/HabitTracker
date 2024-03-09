@@ -154,20 +154,16 @@ LOGGING = {
             'class': 'logging.StreamHandler',
     },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-            },
+    'loggers': { 
         'api': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
         },
         'HabitTracker.middlewares': {
-            'handlers': ['file', 'console'],
+            'handlers': ['file'],
             'level': 'DEBUG',
+            'propagate': False
             },
     },
 }
