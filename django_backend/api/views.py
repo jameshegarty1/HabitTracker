@@ -125,36 +125,36 @@ def getHabit(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
-def createHabit(request):
+@api_view(['post'])
+def createhabit(request):
     data = request.data
-    logger.info("In createHabit view")
-    logger.debug(f"Received data for new habit: {data}")
+    logger.info("in createhabit view")
+    logger.debug(f"received data for new habit: {data}")
 
     tags = []
-    if 'tags' in data and data['tags'] is not None:
+    if 'tags' in data and data['tags'] is not none:
         tags_data = data['tags']
         try:
-            tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
-            logger.debug(f"Processed tags: {tags}")
-        except Exception as e:
-            return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+            tags = [tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
+            logger.debug(f"processed tags: {tags}")
+        except exception as e:
+            return response({'error': f"error processing tags: {str(e)}"}, status=status.http_400_bad_request)
 
-    habit_serializer = HabitSerializer(data=data)
+    habit_serializer = habitserializer(data=data)
     
     if habit_serializer.is_valid():
         habit = habit_serializer.save()
         if not habit:
-            logger.error('Failed to create habit')
-            return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('failed to create habit')
+            return response({'error': 'failed to create habit'}, status=status.http_500_internal_server_error)
         if tags:
             habit.tags.set(tags)
-        logger.info('Habit created successfully')
-        #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
-        Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
+        logger.info('habit created successfully')
+        #return response(habit_serializer.data, status=status.http_201_created)
+        return response({"message": "habit created successfully"}, status=status.http_201_created)
     else:
-        logger.error('Serializer errors: %s', habit_serializer.errors)
-        return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        logger.error('serializer errors: %s', habit_serializer.errors)
+        return response(habit_serializer.errors, status=status.http_400_bad_request)
 
 @api_view(['PUT'])
 def updateHabit(request, pk):
@@ -236,7 +236,7 @@ def createHabit(request):
             habit.tags.set(tags)
         logger.info('Habit created successfully')
         #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
-        Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
     else:
         logger.error('Serializer errors: %s', habit_serializer.errors)
         return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

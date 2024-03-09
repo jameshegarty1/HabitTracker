@@ -2,11 +2,11 @@ from django.db import models
 from enum import Enum
 
 class FrequencyPeriodChoices(models.TextChoices):
-    HOURLY = 'hourly', 'Hourly'
-    DAILY = 'daily', 'Daily'
-    WEEKLY = 'weekly', 'Weekly'
-    MONTHLY = 'monthly', 'Monthly'
-    YEARLY = 'yearly', 'Yearly'
+    HOURLY = 'Hourly'
+    DAILY =  'Daily'
+    WEEKLY = 'Weekly' 
+    MONTHLY = 'Monthly' 
+    YEARLY = 'Yearly' 
 
 class PriorityChoices(Enum):
     CRITICAL = 'critical'
@@ -84,7 +84,7 @@ class HabitRecord(models.Model):
         on_delete=models.CASCADE
         )
     #user = models.ForeignKey('auth.User', on_delete=models.CASCADE)  # Link the history to a user.
-    execution_date = models.DateField(
+    execution_date = models.DateTimeField(
         auto_now_add=True
         )
     notes = models.TextField(
