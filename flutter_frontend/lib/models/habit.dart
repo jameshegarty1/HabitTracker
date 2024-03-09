@@ -64,7 +64,7 @@ class Habit {
   int? parentHabitId;
   String name;
   String? description;
-  int? currentQuantity;
+  int executionQuantity;
   TimeOfDay? notificationTime;
   Priority priority;
   List<String>? tags;
@@ -72,13 +72,14 @@ class Habit {
   DateTime? created;
   int frequencyCount;
   FrequencyPeriod frequencyPeriod;
+  int periodQuantity;
 
   Habit({
     this.id,
     required this.name,
     this.parentHabitId,
     this.description,
-    this.currentQuantity = 0,
+    this.executionQuantity = 0,
     this.notificationTime,
     this.priority = Priority.none,
     this.tags,
@@ -86,6 +87,7 @@ class Habit {
     this.created,
     this.frequencyCount = 1,
     this.frequencyPeriod = FrequencyPeriod.daily, //Default is 1 time per day
+    this.periodQuantity = 0 //this is not in toMap or fromMap as it is populated from a different API endpoint
   });
 
   HabitExecution newExecution() {
@@ -107,20 +109,21 @@ class Habit {
       int? parentHabitId,
       String? name,
       String? description,
-      int? currentQuantity,
+      int? executionQuantity,
       TimeOfDay? notificationTime,
       Priority? priority,
       List<String>? tags,
       DateTime? updated,
       DateTime? created,
       int? frequencyCount,
-      FrequencyPeriod? frequencyPeriod}) {
+      FrequencyPeriod? frequencyPeriod,
+      int? periodQuantity}) {
     return Habit(
       id: id ?? this.id,
       parentHabitId: parentHabitId ?? this.parentHabitId,
       name: name ?? this.name,
       description: description ?? this.description,
-      currentQuantity: currentQuantity ?? this.currentQuantity,
+      executionQuantity: executionQuantity ?? this.executionQuantity,
       notificationTime: notificationTime ?? this.notificationTime,
       priority: priority ?? this.priority,
       tags: tags ?? this.tags,
@@ -128,6 +131,7 @@ class Habit {
       created: created ?? this.created,
       frequencyCount: frequencyCount ?? this.frequencyCount,
       frequencyPeriod: frequencyPeriod ?? this.frequencyPeriod,
+      periodQuantity: periodQuantity ?? this.periodQuantity,
     );
   }
 
@@ -137,14 +141,14 @@ class Habit {
       'parent_habit': parentHabitId,
       'name': name,
       'description': description,
-      'current_quantity': currentQuantity,
+      'execution_quantity': executionQuantity,
       'notification_time': timeOfDayToString(notificationTime),
       'priority': priority.name, //priorityToString(priority),
       'tags': tags,
       'updated': updated?.toIso8601String(),
       'created': created?.toIso8601String(),
       'frequency_count': frequencyCount,
-      'frequency_period': frequencyPeriodToString(frequencyPeriod)
+      'frequency_period': frequencyPeriodToString(frequencyPeriod),
     };
   }
 
@@ -152,7 +156,7 @@ class Habit {
       {required String name,
       int? parentHabitId,
       String? description,
-      int? currentQuantity,
+      int? executionQuantity,
       TimeOfDay? notificationTime,
       Priority priority = Priority.none,
       List<String>? tags,
@@ -163,7 +167,7 @@ class Habit {
         name: name,
         parentHabitId: parentHabitId,
         description: description,
-        currentQuantity: currentQuantity ?? 0,
+        executionQuantity: executionQuantity ?? 0,
         notificationTime: notificationTime,
         priority: priority,
         tags: tags,
@@ -179,7 +183,7 @@ class Habit {
         id: map['id'] as int,
         name: map['name'] as String,
         description: map['description'] as String?,
-        currentQuantity: map['current_quantity'] as int,
+        executionQuantity: map['execution_quantity'] as int,
         notificationTime: map['notification_time'] != null
             ? stringToTimeOfDay(map['notification_time'] as String)
             : null,
@@ -205,7 +209,7 @@ class Habit {
         'parentHabitId: $parentHabitId, '
         'name: "$name", '
         'description: "${description ?? 'null'}", '
-        'currentQuantity: ${currentQuantity?.toString() ?? 'null'}, '
+        'executionQuantity: ${executionQuantity.toString()}, '    
         //'notificationTime: "${notificationTime?.format(context) ?? 'null'}", '
         'priority: ${priorityToString(priority)}, '
         //'tags: ${tags != null ? tags.join(', ') : 'null'}, '

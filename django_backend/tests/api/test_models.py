@@ -12,7 +12,7 @@ class TestHabitModel:
         assert habit.name.startswith("habit_")
         assert isinstance(habit.description, str)
         assert habit.habit_type in [choice[0] for choice in HabitTypeChoices.choices()]
-        assert habit.current_quantity == 0
+        assert habit.execution_quantity == 0
         assert isinstance(habit.start_date, date)
         assert isinstance(habit.end_date, date)
         assert isinstance(habit.notification_time, time)
@@ -86,7 +86,7 @@ class TestHabitModel:
 class TestHabitRecordModel:
     def test_habit_record_creation(self, habit_factory, habit_record_factory):
         habit = habit_factory()
-        initial_quantity = habit.current_quantity
+        initial_quantity = habit.execution_quantity
 
         habit_record = habit_record_factory(habit=habit)
 
@@ -99,8 +99,8 @@ class TestHabitRecordModel:
         # Refresh the habit to get updated data
         habit.refresh_from_db()
 
-        # Check if the current_quantity of the Habit is incremented
-        assert habit.current_quantity == initial_quantity + 1
+        # Check if the execution_quantity of the Habit is incremented
+        assert habit.execution_quantity == initial_quantity + 1
 
     def test_habit_record_with_notes(self, habit_factory, habit_record_factory):
         notes_text = "Completed 5 pages of reading."

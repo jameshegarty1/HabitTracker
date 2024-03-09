@@ -42,7 +42,7 @@ class HabitService {
 
       // Log the full response for debugging
       logger.d('[HabitService] HTTP response status: ${response.statusCode}');
-      logger.d('[HabitService] HTTP response body: \n${response.body}');
+      //logger.d('[HabitService] HTTP response body: \n${response.body}');
 
       if (response.statusCode == 200) {
         // Attempt to parse the JSON, log if there's an error in parsing

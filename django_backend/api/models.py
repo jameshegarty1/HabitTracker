@@ -37,7 +37,7 @@ class Habit(models.Model):
         null=True,
         blank=True
         )
-    current_quantity = models.PositiveIntegerField(
+    execution_quantity = models.PositiveIntegerField(
         default=0
         )
     notification_time = models.TimeField(
@@ -92,12 +92,27 @@ class HabitRecord(models.Model):
         blank=True
         )
 
+    frequency_period = models.CharField(
+        max_length=10,
+        choices=FrequencyPeriodChoices.choices,
+        default=FrequencyPeriodChoices.DAILY,
+    )
+
+    frequency_count = models.PositiveIntegerField(
+        default=1,
+    )
+
+
+
     def save(self, *args, **kwargs):
-        # Update current_quantity for both finite and infinite habits
-        self.habitId.current_quantity += 1
+        # Update execution_quantity for both finite and infinite habits
+        self.habitId.execution_quantity += 1
         #To-do : handle cases of exceeding the goal
-        #if self.habit.habit_type == Habit.FINITE and self.habit.current_quantity > self.habit.goal_quantity:
-            #self.habit.current_quantity = self.habit.goal_quantity
+        #if self.habit.habit_type == Habit.FINITE and self.habit.execution_quantity > self.habit.goal_quantity:
+            #self.habit.execution_quantity = self.habit.goal_quantity
+
+        self.frequency_period = self.habitId.frequency_period
+        self.frequency_count = self.habitId.frequency_count
         self.habitId.save()
         super().save(*args, **kwargs)
     
