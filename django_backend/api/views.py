@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import HabitSerializer, TagSerializer, HabitRecordSerializer
 from .models import Habit, HabitRecord, Tag
-from .performance_handler import calculate_period_quantity 
 import logging
 
 logger = logging.getLogger(__name__)
@@ -125,8 +124,7 @@ def getRoutes(request):
 def getHabits(request):
     print("This part of the code is executed.")
     logger.debug(f'[{__name__}] In getHabits view')
-    habits = Habit.objects.all()
-    habits_performance = calculate_period_quantity(habits)
+    habits = Habit.objects.all() 
     serializer = HabitSerializer(habits, many=True)
     return Response(serializer.data)
 

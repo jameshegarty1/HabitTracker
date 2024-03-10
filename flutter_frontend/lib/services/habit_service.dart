@@ -71,43 +71,6 @@ class HabitService {
     }
   }
 
-  Future<List<int>> retrieveHabitPerformance() async {
-    try {
-      logger.d('[HabitService] Retrieving habit performance');
-
-      // Log the URL being hit for debugging purposes
-      final url = retrievePerformanceUrl();
-      logger.d('[HabitService] Request URL: $url');
-
-      final response = await client.get(url);
-
-      logger.d('[HabitService] HTTP response status: ${response.statusCode}');
-
-      if (response.statusCode == 200) {
-        // Attempt to parse the JSON, log if there's an error in parsing
-        try {
-          Iterable list = json.decode(response.body);
-          for (var elemnt in list) {
-            logger.d('[HabitService] Habit data: ${habit.toString()}');
-          }
-          return habits;
-        } catch (e) {
-          logger.e('[HabitService] Error parsing habits JSON: $e');
-          throw Exception('[HabitService] Error parsing habits JSON');
-        }
-      } else {
-        logger.e(
-            '[HabitService] Failed to retrieve habits. Status code: ${response.statusCode}');
-        throw Exception(
-            '[HabitService] Failed to retrieve habits. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Log any general errors in the function
-      logger.e('[HabitService] Error retrieving habits: $e');
-      throw Exception('[HabitService] Error retrieving habits: $e');
-    }
-  }
-
   Future<void> updateHabit(Habit habit) async {
     logger.d('[HabitService] Updating habit with ID: ${habit.id}');
     final response = await client.put(

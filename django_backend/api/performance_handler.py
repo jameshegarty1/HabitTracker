@@ -15,9 +15,12 @@ def calculate_period_quantity(habit_input):
             logger.info(f"[{__name__}] Habit ID {habit.id}, current performance = {executions_count}, frequency period is {habit.frequency_period}, checking performance from between: {start_period}, {end_period}")
 
     else:
-        start_period, end_period = get_period_start_end(habit_input.frequency_period)
-        logger.info(f"[{__name__}] Habit ID {habit_input.id}, current performance = {executions_count}, frequency period is {habit_input.frequency_period}, checking performance from between: {start_period}, {end_period}")
+        habit = habit_input
+        logger.debug(f"[{__name__}] Printing habit input frequency : {habit.frequency_period}")
+        logger.debug(f"[{__name__}] Type of habit_input: {type(habit)}")
+        start_period, end_period = get_period_start_end(habit.frequency_period)
         executions_count = HabitRecord.objects.filter(habitId_id=habit.id, execution_date__range=(start_period, end_period)).count()
+        logger.info(f"[{__name__}] Habit ID {habit.id}, current performance = {executions_count}, frequency period is {habit.frequency_period}, checking performance from between: {start_period}, {end_period}")
         return executions_count
 
 def get_period_start_end(frequency_period, reference_date=None):

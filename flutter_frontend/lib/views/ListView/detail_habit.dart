@@ -23,6 +23,7 @@ class HabitDetailView extends StatelessWidget {
           _buildTile('Priority', priorityToString(habit.priority)),
           _buildTile('Execution Quantity', habit.executionQuantity.toString()),
           _buildTile('Frequency', formatFrequency(habit.frequencyCount, habit.frequencyPeriod)),
+          _buildTile('Executions this period', habit.periodQuantity.toString()),
 
           _actionButtons(context), // <- Updated this
         ],
