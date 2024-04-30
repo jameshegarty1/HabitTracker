@@ -1,1 +1,9 @@
-First commit.
+Simple Habit Tracker app.
+
+Features:
+- Habit creation
+  - Custom completion frequency setting
+  - Reminders
+- Habit completion
+  - Track progress
+
