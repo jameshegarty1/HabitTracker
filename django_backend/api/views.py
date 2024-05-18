@@ -8,6 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+print(__name__)
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -42,6 +43,14 @@ def getRoutes(request):
             'method': 'DELETE',
             'body': None,
             'description': 'Deletes an existing Habit'
+        },
+
+        #HabitPerformance
+        {
+            'Endpoint': '/habits/performance/',
+            'method': 'GET',
+            'body': None,
+            'description': 'Get the current performance for all habits'
         },
 
         # habitRecord Endpoints
@@ -109,12 +118,13 @@ def getRoutes(request):
     ]
     return Response(routes)
 
-
 #habit endpoints
 
 @api_view(['GET'])
 def getHabits(request):
-    habits = Habit.objects.all()
+    print("This part of the code is executed.")
+    logger.debug(f'[{__name__}] In getHabits view')
+    habits = Habit.objects.all() 
     serializer = HabitSerializer(habits, many=True)
     return Response(serializer.data)
 
@@ -124,19 +134,18 @@ def getHabit(request, pk):
     serializer = HabitSerializer(habit, many=False)
     return Response(serializer.data)
 
-
 @api_view(['POST'])
 def createHabit(request):
     data = request.data
-    logger.info("In createHabit view")
-    logger.debug(f"Received data for new habit: {data}")
+    logger.info(f"[{__name__}] In createHabit view")
+    logger.debug(f"[{__name__}] Received data for new habit: {data}")
 
     tags = []
     if 'tags' in data and data['tags'] is not None:
         tags_data = data['tags']
         try:
             tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
-            logger.debug(f"Processed tags: {tags}")
+            logger.debug(f"[{__name__}] Processed tags: {tags}")
         except Exception as e:
             return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -145,16 +154,17 @@ def createHabit(request):
     if habit_serializer.is_valid():
         habit = habit_serializer.save()
         if not habit:
-            logger.error('Failed to create habit')
+            logger.error(f'[{__name__}] Failed to create habit')
             return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         if tags:
             habit.tags.set(tags)
-        logger.info('Habit created successfully')
+        logger.info(f'[{__name__}] Habit created successfully')
         #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
-        Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
     else:
-        logger.error('Serializer errors: %s', habit_serializer.errors)
+        logger.error(f'[{__name__}] Serializer errors: %s', habit_serializer.errors)
         return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['PUT'])
 def updateHabit(request, pk):
@@ -174,6 +184,14 @@ def deleteHabit(request, pk):
     habit = Habit.objects.get(id=pk)
     habit.delete()
     return Response("Habit was deleted.")
+
+#habit performance
+
+@api_view(['GET'])
+def getHabitPerformance(request):
+    habits = Habit.objects.all()
+
+
 
 
 #habit record endpoints
@@ -192,54 +210,22 @@ def getHabitRecord(request, pk):
 @api_view(['POST'])
 def createHabitRecord(request):
     data = request.data
-    logger.info("In createHabitRecord view")
-    logger.debug(f"Received data for new habit record: {data}")
+    logger.info(f"[{__name__}] In createHabitRecord view")
+    logger.debug(f"[{__name__}] Received data for new habit record: {data}")
 
     habit_record_serializer = HabitRecordSerializer(data=data)
     
     if habit_record_serializer.is_valid():
         habit_record = habit_record_serializer.save()
         if not habit_record:
-            logger.error('Failed to create habit record')
+            logger.error(f'[{__name__}] Failed to create habit record')
             return Response({'error': 'Failed to create habit record'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        logger.info('Habit record created successfully')
+        logger.info(f'[{__name__}] Habit record created successfully')
         #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
         return Response({"message": "Habit record created successfully"}, status=status.HTTP_201_CREATED)
     else:
         logger.error('Serializer errors: %s', habit_record_serializer.errors)
         return Response(habit_record_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-def createHabit(request):
-    data = request.data
-    logger.info("In createHabit view")
-    logger.debug(f"Received data for new habit: {data}")
-
-    tags = []
-    if 'tags' in data and data['tags'] is not None:
-        tags_data = data['tags']
-        try:
-            tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
-            logger.debug(f"Processed tags: {tags}")
-        except Exception as e:
-            return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
-    habit_serializer = HabitSerializer(data=data)
-    
-    if habit_serializer.is_valid():
-        habit = habit_serializer.save()
-        if not habit:
-            logger.error('Failed to create habit')
-            return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        if tags:
-            habit.tags.set(tags)
-        logger.info('Habit created successfully')
-        #return Response(habit_serializer.data, status=status.HTTP_201_CREATED)
-        Response({"message": "Habit created successfully"}, status=status.HTTP_201_CREATED)
-    else:
-        logger.error('Serializer errors: %s', habit_serializer.errors)
-        return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])
@@ -255,179 +241,6 @@ def updateHabitRecord(request, pk):
     serializer = HabitRecordSerializer(record, many=False)
     return Response(serializer.data)
 
-
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        # Habit Endpoints
-        {
-            'Endpoint': '/habits/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns an array of Habits'
-        },
-        {
-            'Endpoint': '/habits/id/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns a single Habit'
-        },
-        {
-            'Endpoint': '/habits/create/',
-            'method': 'POST',
-            'body': {'body': ""},
-            'description': 'Creates a new Habit'
-        },
-        {
-            'Endpoint': '/habits/id/update/',
-            'method': 'PUT',
-            'body': {'body': ""},
-            'description': 'Modifies an existing Habit'
-        },
-        {
-            'Endpoint': '/habits/id/delete/',
-            'method': 'DELETE',
-            'body': None,
-            'description': 'Deletes an existing Habit'
-        },
-
-        # habitRecord Endpoints
-        {
-            'Endpoint': '/habitRecords/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns an array of HabitRecords'
-        },
-        {
-            'Endpoint': '/habitRecords/id/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns a single HabitRecord'
-        },
-        {
-            'Endpoint': '/habitRecords/create/',
-            'method': 'POST',
-            'body': {'body': ""},
-            'description': 'Creates a new habitRecord'
-        },
-        {
-            'Endpoint': '/habitRecords/id/update/',
-            'method': 'PUT',
-            'body': {'body': ""},
-            'description': 'Modifies an existing HabitRecord'
-        },
-        {
-            'Endpoint': '/habits/id/delete/',
-            'method': 'DELETE',
-            'body': None,
-            'description': 'Deletes an existing HabitRecord'
-        },
-        # Tag Endpoints
-        {
-            'Endpoint': '/tags/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns an array of Tags'
-        },
-        {
-            'Endpoint': '/tags/id/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns a single Tag'
-        },
-        {
-            'Endpoint': '/tags/create/',
-            'method': 'POST',
-            'body': {'name': ""},
-            'description': 'Creates a new Tag'
-        },
-        {
-            'Endpoint': '/tags/id/update/',
-            'method': 'PUT',
-            'body': {'body': ""},
-            'description': 'Modifies an existing Tag'
-        },
-        {
-            'Endpoint': '/tags/id/delete/',
-            'method': 'DELETE',
-            'body': None,
-            'description': 'Deletes an existing Tag'
-        },
-    ]
-    return Response(routes)
-
-
-#habit endpoints
-
-@api_view(['GET'])
-def getHabits(request):
-    habits = Habit.objects.all()
-    serializer = HabitSerializer(habits, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def getHabit(request, pk):
-    habit = Habit.objects.get(id=pk)
-    serializer = HabitSerializer(habit, many=False)
-    return Response(serializer.data)
-
-
-@api_view(['POST'])
-def createHabit(request):
-    data = request.data
-
-    tags = []
-    if 'tags' in data and data['tags'] is not None:
-        tags_data = data['tags']
-        try:
-            tags = [Tag.objects.get_or_create(name=tag_name)[0] for tag_name in tags_data]
-        except Exception as e:
-            return Response({'error': f"Error processing tags: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
-
-    habit_serializer = HabitSerializer(data=data)
-    
-    if habit_serializer.is_valid():
-        habit = habit_serializer.save()
-        if not habit:
-            return Response({'error': 'Failed to create habit'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        if tags:
-            habit.tags.set(tags)
-        return Response(habit_serializer.data)
-    else:
-        return Response(habit_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['PUT'])
-def updateHabit(request, pk):
-    data = request.data
-
-    habit = Habit.objects.get(id=pk)
-
-    serializer = HabitSerializer(habit, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-
-    serializer = HabitSerializer(habit, many=False)
-    return Response(serializer.data)
-
-@api_view(['DELETE'])
-def deleteHabit(request, pk):
-    habit = Habit.objects.get(id=pk)
-    habit.delete()
-    return Response("Habit was deleted.")
-
-
-#habit record endpoints
-@api_view(['GET'])
-def getHabitRecords(request):
-    records = HabitRecord.objects.all()
-    serializer = HabitRecordSerializer(records, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def getHabitRecord(request, pk):
-    record = HabitRecord.objects.get(id=pk)
-    serializer = HabitSerializer(record, many=False)
-    return Response(serializer.data)
 @api_view(['DELETE'])
 def deleteHabitRecord(request, pk):
     record = HabitRecord.objects.get(id=pk)

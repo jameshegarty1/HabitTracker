@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Habit, HabitRecord, Tag
+from .performance_handler import calculate_period_quantity 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,10 +17,18 @@ class HabitRecordSerializer(serializers.ModelSerializer):
 class HabitSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, required=False, allow_null=True, default=[])
 
+    period_quantity = serializers.SerializerMethodField()
+
+
+    def get_period_quantity(self, obj):
+        habit_performance = calculate_period_quantity(obj)
+        return habit_performance
+
+
 
     class Meta:
         model = Habit
-        fields = ['id', 'name', 'description', 'tags', 'current_quantity', 'notification_time', 'priority', 'frequency_count', 'frequency_period']
+        fields = ['id', 'name', 'description', 'tags', 'execution_quantity', 'notification_time', 'priority', 'frequency_count', 'frequency_period', 'period_quantity']
         extra_kwargs = {'tags': {'required': False}}
 
     def update(self, instance, validated_data):

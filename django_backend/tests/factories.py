@@ -19,7 +19,7 @@ class HabitFactory(factory.django.DjangoModelFactory):
     description = factory.Faker("text")
     habit_type = FuzzyChoice(HabitTypeChoices.choices(), getter=lambda c: c[0])
     goal_quantity = factory.LazyAttribute(lambda o: 10 if o.habit_type == HabitTypeChoices.FINITE.value else None)
-    current_quantity = 0
+    execution_quantity = 0
     start_date = FuzzyDate(start_date=date.today())
     end_date = FuzzyDate(start_date=date.today())
     notification_time = factory.Faker("time_object")

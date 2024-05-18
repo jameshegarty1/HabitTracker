@@ -7,7 +7,7 @@ import 'habit_execution.dart';
 
 enum FrequencyPeriod { hourly, daily, weekly, monthly, yearly }
 
-enum Priority { none, low, medium, high, critical}
+enum Priority { none, low, medium, high, critical }
 
 Priority stringToPriority(String priorityString) {
   switch (priorityString) {
@@ -49,13 +49,16 @@ String frequencyPeriodToString(FrequencyPeriod period) {
 
 FrequencyPeriod stringToFrequencyPeriod(String periodString) {
   return FrequencyPeriod.values.firstWhere(
-    (period) => frequencyPeriodToString(period).toLowerCase() == periodString.toLowerCase(),
+    (period) =>
+        frequencyPeriodToString(period).toLowerCase() ==
+        periodString.toLowerCase(),
     orElse: () => FrequencyPeriod.daily,
   );
 }
 
 String formatFrequency(int count, FrequencyPeriod period) {
-  String periodString = frequencyPeriodToString(period).toLowerCase(); // Convert the period to a string
+  String periodString = frequencyPeriodToString(period)
+      .toLowerCase(); // Convert the period to a string
   return "${count}x $periodString"; // Combine count and period into a single string
 }
 
@@ -64,7 +67,7 @@ class Habit {
   int? parentHabitId;
   String name;
   String? description;
-  int? currentQuantity;
+  int executionQuantity;
   TimeOfDay? notificationTime;
   Priority priority;
   List<String>? tags;
@@ -72,21 +75,22 @@ class Habit {
   DateTime? created;
   int frequencyCount;
   FrequencyPeriod frequencyPeriod;
+  int periodQuantity;
 
-  Habit({
-    this.id,
-    required this.name,
-    this.parentHabitId,
-    this.description,
-    this.currentQuantity = 0,
-    this.notificationTime,
-    this.priority = Priority.none,
-    this.tags,
-    this.updated,
-    this.created,
-    this.frequencyCount = 1,
-    this.frequencyPeriod = FrequencyPeriod.daily, //Default is 1 time per day
-  });
+  Habit(
+      {this.id,
+      required this.name,
+      this.parentHabitId,
+      this.description,
+      this.executionQuantity = 0,
+      this.notificationTime,
+      this.priority = Priority.none,
+      this.tags,
+      this.updated,
+      this.created,
+      this.frequencyCount = 1,
+      this.frequencyPeriod = FrequencyPeriod.daily, //Default is 1 time per day
+      this.periodQuantity = 0});
 
   HabitExecution newExecution() {
     if (id == null) {
@@ -107,20 +111,21 @@ class Habit {
       int? parentHabitId,
       String? name,
       String? description,
-      int? currentQuantity,
+      int? executionQuantity,
       TimeOfDay? notificationTime,
       Priority? priority,
       List<String>? tags,
       DateTime? updated,
       DateTime? created,
       int? frequencyCount,
-      FrequencyPeriod? frequencyPeriod}) {
+      FrequencyPeriod? frequencyPeriod,
+      int? periodQuantity}) {
     return Habit(
       id: id ?? this.id,
       parentHabitId: parentHabitId ?? this.parentHabitId,
       name: name ?? this.name,
       description: description ?? this.description,
-      currentQuantity: currentQuantity ?? this.currentQuantity,
+      executionQuantity: executionQuantity ?? this.executionQuantity,
       notificationTime: notificationTime ?? this.notificationTime,
       priority: priority ?? this.priority,
       tags: tags ?? this.tags,
@@ -128,6 +133,7 @@ class Habit {
       created: created ?? this.created,
       frequencyCount: frequencyCount ?? this.frequencyCount,
       frequencyPeriod: frequencyPeriod ?? this.frequencyPeriod,
+      periodQuantity: periodQuantity ?? this.periodQuantity,
     );
   }
 
@@ -137,14 +143,15 @@ class Habit {
       'parent_habit': parentHabitId,
       'name': name,
       'description': description,
-      'current_quantity': currentQuantity,
+      'execution_quantity': executionQuantity,
       'notification_time': timeOfDayToString(notificationTime),
       'priority': priority.name, //priorityToString(priority),
       'tags': tags,
       'updated': updated?.toIso8601String(),
       'created': created?.toIso8601String(),
       'frequency_count': frequencyCount,
-      'frequency_period': frequencyPeriodToString(frequencyPeriod)
+      'frequency_period': frequencyPeriodToString(frequencyPeriod),
+      'period_quantity': periodQuantity,
     };
   }
 
@@ -152,25 +159,28 @@ class Habit {
       {required String name,
       int? parentHabitId,
       String? description,
-      int? currentQuantity,
+      int? executionQuantity,
       TimeOfDay? notificationTime,
       Priority priority = Priority.none,
       List<String>? tags,
       int frequencyCount = 1,
-      FrequencyPeriod frequencyPeriod = FrequencyPeriod.daily}) {
+      FrequencyPeriod frequencyPeriod = FrequencyPeriod.daily,
+      int periodQuantity = 0}) {
     return Habit(
         id: null,
         name: name,
         parentHabitId: parentHabitId,
         description: description,
-        currentQuantity: currentQuantity ?? 0,
+        executionQuantity: executionQuantity ?? 0,
         notificationTime: notificationTime,
         priority: priority,
         tags: tags,
         updated: null,
         created: null,
         frequencyCount: frequencyCount,
-        frequencyPeriod: frequencyPeriod);
+        frequencyPeriod: frequencyPeriod,
+        periodQuantity: periodQuantity
+        );
   }
 
   factory Habit.fromMap(Map<String, dynamic> map) {
@@ -179,7 +189,7 @@ class Habit {
         id: map['id'] as int,
         name: map['name'] as String,
         description: map['description'] as String?,
-        currentQuantity: map['current_quantity'] as int,
+        executionQuantity: map['execution_quantity'] as int,
         notificationTime: map['notification_time'] != null
             ? stringToTimeOfDay(map['notification_time'] as String)
             : null,
@@ -189,8 +199,11 @@ class Habit {
         created: map['created'] != null ? DateTime.parse(map['created']) : null,
         parentHabitId: map['parent_habit'] as int?,
         frequencyCount: map['frequency_count'] as int,
-        frequencyPeriod: stringToFrequencyPeriod(map['frequencyPeriod'] as String? ?? 'daily')
-    );
+        frequencyPeriod: stringToFrequencyPeriod(
+            map['frequencyPeriod'] as String? ?? 'daily'),
+        periodQuantity: map['period_quantity']
+        );
+
   }
 
   String toJson() => json.encode(toMap());
@@ -205,13 +218,14 @@ class Habit {
         'parentHabitId: $parentHabitId, '
         'name: "$name", '
         'description: "${description ?? 'null'}", '
-        'currentQuantity: ${currentQuantity?.toString() ?? 'null'}, '
+        'executionQuantity: ${executionQuantity.toString()}, '
         //'notificationTime: "${notificationTime?.format(context) ?? 'null'}", '
         'priority: ${priorityToString(priority)}, '
         //'tags: ${tags != null ? tags.join(', ') : 'null'}, '
         'updated: "${updated?.toIso8601String() ?? 'null'}", '
         'created: "${created?.toIso8601String() ?? 'null'}"), '
         'frequency count: "$frequencyCount", '
-        'frequency period: "$frequencyPeriodToString(frequencyPeriod)"';
+        'frequency period: "$frequencyPeriodToString(frequencyPeriod)"'
+        'period quantity: $periodQuantity';
   }
 }

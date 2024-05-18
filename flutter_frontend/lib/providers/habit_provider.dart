@@ -21,7 +21,7 @@ class HabitProvider with ChangeNotifier {
     } catch (e) {
       logger.e('error: $e');
     }
-  }
+  } 
 
   Future<void> createHabit(Habit habit) async {
     try {
@@ -60,8 +60,5 @@ class HabitProvider with ChangeNotifier {
     } catch (e) {
       logger.e('error: $e');
     }
-      
   }
-
 }
-

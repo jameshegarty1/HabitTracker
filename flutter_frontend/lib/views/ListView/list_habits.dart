@@ -5,6 +5,7 @@ import 'package:flutter_frontend/providers/auth_provider.dart';
 import 'package:flutter_frontend/views/ListView/create_habit.dart';
 import 'package:flutter_frontend/utils/dialog_utils.dart';
 import 'package:flutter_frontend/main.dart';
+import 'package:flutter_frontend/widgets/habit_progress_bar.dart';
 import 'detail_habit.dart';
 
 class HabitListView extends StatelessWidget {
@@ -43,6 +44,7 @@ class HabitListView extends StatelessWidget {
                 logger.d('Building item $index: ${habit.toString()}');
                 return ExpansionTile(
                   title: Text(habit.name),
+                  subtitle: HabitProgressBar(totalBars: habit.frequencyCount, filledBars: habit.periodQuantity),
                   trailing: IconButton(
                     icon: Icon(Icons.check),
                     onPressed: () async {

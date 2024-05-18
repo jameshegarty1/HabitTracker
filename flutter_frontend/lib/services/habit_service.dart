@@ -42,13 +42,18 @@ class HabitService {
 
       // Log the full response for debugging
       logger.d('[HabitService] HTTP response status: ${response.statusCode}');
-      logger.d('[HabitService] HTTP response body: \n${response.body}');
+      //logger.d('[HabitService] HTTP response body: \n${response.body}');
 
       if (response.statusCode == 200) {
         // Attempt to parse the JSON, log if there's an error in parsing
         try {
           Iterable list = json.decode(response.body);
-          return list.map((habit) => Habit.fromMap(habit)).toList();
+          List<Habit> habits =
+              list.map((habit) => Habit.fromMap(habit)).toList();
+          for (var habit in habits) {
+            logger.d('[HabitService] Habit data: ${habit.toString()}');
+          }
+          return habits;
         } catch (e) {
           logger.e('[HabitService] Error parsing habits JSON: $e');
           throw Exception('[HabitService] Error parsing habits JSON');
